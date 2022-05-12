@@ -1,0 +1,66 @@
+// Use this file to overwrite the basic Bootstrap variables and add your own variables
+// To overwrite a Bootstrap variable you don´t have to touch the Bootstrap folder.
+// Just copy a variable from src/sass/bootstrap4/_variables.scss, paste it here and edit the value.
+
+$lc-white: #ffffff;
+$lc-black: #000000;
+$lc-primary: #3131bd;
+$lc-accent: #3559cd29;
+
+$white: #fff !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #e9ecef !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #adb5bd !default;
+$gray-600: #868e96 !default;
+$gray-700: #495057 !default;
+$gray-800: #343a40 !default;
+$gray-900: #212529 !default;
+$black: #000 !default;
+
+$body-font: 'Outfit', sans-serif;
+$heading-font: 'Outfit', sans-serif;
+
+$shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+$cutout-size: 1rem;
+$overlay: rgba(59, 66, 70, 0.5);
+
+$spacing-xs: 4px;
+$spacing: 8px;
+$spacing-sm: 16px;
+$spacing-md: 24px;
+$spacing-lg: 32px;
+$spacing-xl: 40px;
+$spacing-xxl: 50px;
+$spacing-max: 64px;
+$spacing-big: 128px;
+
+$border-radius: $spacing;
+$border-radius-lg: $spacing-md;
+$border-color: #DEDEDE;
+
+$grid-breakpoints: (
+    xs: 0,
+    sm: 576px,
+    md: 768px,
+    lg: 992px,
+    xl: 1240px,
+    xxl: 1320px
+) !default;
+
+@include _assert-ascending($grid-breakpoints, "$grid-breakpoints");
+@include _assert-starts-at-zero($grid-breakpoints, "$grid-breakpoints");
+
+// Grid containers
+//
+// Define the maximum width of `.container` for different screen sizes.
+
+$container-max-widths: (
+    sm: 540px,
+    md: 750px,
+    lg: 980px,
+    xl: 1200px
+) !default;
+
+@include _assert-ascending($container-max-widths, "$container-max-widths");

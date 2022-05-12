@@ -1,0 +1,44 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+body{
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+.wf{
+    border: 1px solid red;
+}
+.header{
+    color: $lc-white;
+    background: $lc-primary;
+    height: 15vh;
+    .heading{
+        text-transform: uppercase;
+    }
+    .username{
+        padding: 10px;
+        border-radius: 8px;
+    }
+}
+.message-box{
+    height: 70vh;
+    background: $gray-200;
+}
+.bottom{
+    height: 15vh;
+    .message-input{
+        padding: 10px;
+        width: 100%;
+        background: $lc-accent;
+    }
+    .button{
+        background: $lc-primary;
+        color: $lc-white;
+        padding: 5px;
+        border-radius: 8px;
+        width: 100%;
+    }
+}
+

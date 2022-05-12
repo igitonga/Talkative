@@ -8,9 +8,9 @@
     <title>LiveChat</title>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Tuongee!</h1>
+    <div class="container-fluid">
+        <div class="d-flex flex-column align-items-center header pt-3 pb-3">
+            <h1 class="heading">Tuongee!</h1>
 
             <input type="text" class="username" id="username" placeholder="Your username...">
         </div>
@@ -19,7 +19,7 @@
 
        <div class="bottom">
             <form id="message-form">
-                <input type="text" id="message-input" class="message-input" placeholder="Write something...">
+                <textarea type="text" id="message-input" class="message-input" placeholder="Write something..."></textarea>
                 <button class="button" type="submit">Send message</button>
             </form>
        </div>
