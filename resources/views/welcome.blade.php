@@ -1,29 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="{{asset('css/app.css')}}">
-    <title>LiveChat</title>
-</head>
-<body>
-    <div class="container-fluid">
-        <div class="d-flex flex-column align-items-center header pt-3 pb-3">
-            <h1 class="heading">Tuongee!</h1>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>LiveChat</title>
 
-            <input type="text" class="username" id="username" placeholder="Your username...">
-        </div>
+        <link rel="icon" type="image/x-icon" href="/wagelyft_icon.svg">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 
-        <div class="message-box" id="message-box"></div>
+        {{-- Tailwind --}}
+        <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 
-       <div class="bottom">
-            <form id="message-form">
-                <textarea type="text" id="message-input" class="message-input" placeholder="Write something..."></textarea>
-                <button class="button" type="submit">Send message</button>
-            </form>
-       </div>
-    </div>
-    <script src="./js/app.js"></script>
-</body>
+        <style>
+            * {
+                font-family: 'Inter', sans-serif;
+            }
+            .Toastify__toast-icon {
+                display: inline !important;
+            }
+        </style>
+    </head>
+    <body class="antialiased">
+        <div id="app"></div>
+        <script src='{{ mix('js/app.js') }}'></script> 
+    </body>
 </html>

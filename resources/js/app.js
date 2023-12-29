@@ -1,46 +1,15 @@
-const { default: axios } = require('axios');
+/**
+ * First we will load all of this project's JavaScript dependencies which
+ * includes React and other helpers. It's a great starting point while
+ * building robust, powerful web applications using React + Laravel.
+ */
 
 require('./bootstrap');
 
-const messages_el = document.getElementById("message-box")
-const username = document.getElementById("username")
-const message_input = document.getElementById("message-input")
-const message_form = document.getElementById("message-form")
+/**
+ * Next, we will create a fresh React component instance and attach it to
+ * the page. Then, you may begin adding components to this application
+ * or customize the JavaScript scaffolding to fit your unique needs.
+ */
 
-message_form.addEventListener('submit', function(e){
-
-    e.preventDefault()
-
-    let has_error = false;
-
-    if(username == ''){
-        alert('Username is empty')
-        has_error = true
-    }
-
-    if(message_input == ''){
-        alert('Message is empty')
-        has_error = true
-    }
-
-    if(has_error){
-        return
-    }
-
-    const option = {
-        method: 'post',
-        url: '/send_message',
-        data: {
-            username: username.value,
-             message: message_input.value,
-        }
-    }
-
-    axios(option)
-})
-
-window.Echo.channel('chat')
-        .listen('.message', (e) => {
-            messages_el.innerHTML += '<div><strong>' + e.username + ':</strong>' + e.message +
-                '</div>'
-        })
+require('./components/App');
