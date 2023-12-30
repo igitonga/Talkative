@@ -1,24 +1,70 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+
+import Login from './Login';
+import SignUp from './SignUp';
+
+const theme = createTheme({
+    palette: {
+        primary: {
+            main: '#2C58C2',
+        },
+        secondary: {
+            main: '#1079B4',
+            light: '#4ECDE8',
+        },
+        background: {
+            paper: '#F7F7FC',
+        },
+        common: {
+            black: '#4E4B66',
+            label: '#6E7191',
+        },
+        warning: {
+            main: '#FFF4DB',
+        },
+        error: {
+            main: '#E87D66',
+        },
+    },
+    typography: {
+        fontFamily: [
+            'Inter',
+            'sans-serif',
+        ].join(','),
+    },
+    breakpoints: {
+        // Values set according to tailwind breakpoints
+        values: {
+            xs: 0,
+            sm: 640,
+            md: 768,
+            lg: 1024,
+            xl: 1280,
+        },
+    },
+});
+
 function App() {
     return (
-        <div className="container">
-            <div className="row justify-content-center">
-                <div className="col-md-8">
-                    <div className="card">
-                        <div className="card-header">Example Component</div>
-
-                        <div className="card-body">I'm an example component!</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <ThemeProvider theme={theme}>
+            <Routes>
+                <Route path='/' element={<Login />} />
+                <Route path='sign-up' element={<SignUp />} />
+            </Routes>
+        </ThemeProvider>
     );
 }
 
 export default App;
 
 if (document.getElementById('app')) {
-    ReactDOM.render(<App />, document.getElementById('app'));
+    ReactDOM.render(
+        <BrowserRouter>
+            <App />
+        </BrowserRouter>
+    , document.getElementById('app'));
 }
