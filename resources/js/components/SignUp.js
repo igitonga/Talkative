@@ -1,49 +1,74 @@
 import React from "react";
 
-import { FormControl, 
+import {  
          TextField,
          Button,
-         Typography
+         Typography,
+         useTheme,
 } from "@mui/material";
 
 import { Link } from "react-router-dom";
 
 const SignUp = () => {
+    const theme = useTheme();
+
     return(
         <div className="px-4 py-5">
-            <FormControl>
-                <div className="flex my-2">
-                    <TextField
-                        id="outlined-fname"
-                        label="First name"
-                        sx={{ mr: 1 }}
-                        type="text"
-                    />
-                    <TextField
-                        id="outlined-lname"
-                        label="Last name"
-                        sx={{ ml: 1 }}
-                        type="text"
-                    />
-                </div>
+            <Typography sx={{ mb:2,
+                              textAlign: 'center',
+                              fontSize: 'xl'
+                            }}>
+                Sign up to Talkative
+            </Typography>
+            <div className="flex mb-2">
                 <TextField
-                    id="outlined-email"
-                    label="Email"
-                    sx={{ my: 1 }}
-                    type="email"
+                    id="outlined-fname"
+                    label="First name"
+                    sx={{ mr: 1
+                        }}
+                    type="text"
+                    fullWidth
                 />
                 <TextField
-                    id="outlined-password"
-                    label="Password"
-                    sx={{ my: 1 }}
-                    type="password"
+                    id="outlined-lname"
+                    label="Last name"
+                    sx={{ ml: 1
+                        }}
+                    type="text"
+                    fullWidth
                 />
-                <Button 
-                    variant="contained"
-                    sx={{ my: 1 }}
-                >Sign up</Button>
-            </FormControl>
-            <Typography sx={{ mt: 2,  }}>Already signed up? <Link to="/">Login</Link></Typography>
+            </div>
+            <TextField
+                id="outlined-email"
+                label="Email"
+                sx={{ my: 1
+                    }}
+                type="email"
+                fullWidth
+            />
+            <TextField
+                id="outlined-password"
+                label="Password"
+                sx={{ my: 1
+                    }}
+                type="password"
+                fullWidth
+            />
+            <Button 
+                variant="contained"
+                fullWidth
+                sx={{ my: 1,
+                        textAlign: 'center',
+                        background: theme.palette.primary.main,
+                    }}  
+            >
+            Sign Up
+            </Button>
+            <Typography sx={{ mt: 2,
+                              textAlign: 'center'
+                            }}>
+                Already registered? <Link to="/">Login</Link>
+            </Typography>
         </div>
     )
 }

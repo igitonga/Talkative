@@ -10,11 +10,11 @@ import SignUp from './SignUp';
 const theme = createTheme({
     palette: {
         primary: {
-            main: '#2C58C2',
+            main: '#FFA500',
         },
         secondary: {
-            main: '#1079B4',
-            light: '#4ECDE8',
+            main: '#800080',
+            light: '#90EE90',
         },
         background: {
             paper: '#F7F7FC',
