@@ -20,6 +20,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/login', function () {
+    return view('welcome');
+});
+
+Route::get('/sign-up', function () {
+    return view('welcome');
+});
+
 Route::post('/send_message', function(Request $request){
     event(
         new Message(

@@ -23,12 +23,13 @@ class UserController extends Controller
         # access token of current user
         return response()->json([
             'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'token_type' => 'Bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60,
+            'user' => auth()->user()
         ]);
     }
 
-    public function create(Request $request){
+    public function createUser(Request $request){
         try{
             DB::beginTransaction();
 
@@ -58,10 +59,10 @@ class UserController extends Controller
         try{
             $credentials = request(['email', 'password']);
 
-            if (! $token = auth()->attempt($credentials)) {
+            if(!$token = auth()->attempt($credentials)) {
                 return response([
                     'status' => Response::HTTP_UNAUTHORIZED,
-                    'message' => 'Unauthorized',
+                    'message' => 'Wrong email or password',
                 ]);
             }
     

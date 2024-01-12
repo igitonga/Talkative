@@ -1,11 +1,14 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import ReactDOM from 'react-dom';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
+import { Provider, useSelector } from 'react-redux';
+import store from "../store"
 
-import Login from './Login';
-import SignUp from './SignUp';
+import Login from './pages/Login';
+import SignUp from './pages/SignUp';
+import Dashboard from './pages/Dashboard';
 
 const theme = createTheme({
     palette: {
@@ -49,11 +52,24 @@ const theme = createTheme({
 });
 
 function App() {
+    const navigate = useNavigate();
+    const {loginStatus} = useSelector(state => state.user);
+
+    useEffect(()=>{
+        if(loginStatus === 0){
+            navigate('/login')
+        }
+        else{
+            navigate('/')
+        }
+    },[loginStatus]);
+
     return (
         <ThemeProvider theme={theme}>
             <Routes>
-                <Route path='/' element={<Login />} />
-                <Route path='/sign-up' element={<SignUp />} />
+                <Route path='/' element={<Dashboard />} />
+                <Route path='login' element={<Login />} />
+                <Route path='sign-up' element={<SignUp />} />
             </Routes>
         </ThemeProvider>
     );
@@ -63,8 +79,10 @@ export default App;
 
 if (document.getElementById('app')) {
     ReactDOM.render(
-        <BrowserRouter>
-            <App />
-        </BrowserRouter>
+        <Provider store={store}>
+            <BrowserRouter>
+                <App />
+            </BrowserRouter>
+        </Provider>
     , document.getElementById('app'));
 }

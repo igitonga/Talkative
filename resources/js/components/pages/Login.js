@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect,useState} from "react";
 
 import {  
          TextField,
@@ -7,13 +7,34 @@ import {
          useTheme,
 } from "@mui/material";
 
-import Illustration from "../assets/landing.svg";
+import Illustration from "../../assets/landing.svg";
 
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../../redux/userSlice";
 
 const Login = () => {
     const theme = useTheme();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const { userData } = useSelector(state => state.user);
+
+    const submitLogin = () => {
+        if(email === '' || password === '') {
+            return;
+        }
+        setLoading(true);
+        dispatch(loginUser({ email, password }));
+
+        setEmail('');
+        setPassword('');
+        setLoading(false)
+    }
 
     const signupNavigation = () => {
         navigate('/sign-up')
@@ -46,6 +67,10 @@ const Login = () => {
                     }}
                 type="email"
                 fullWidth
+                value={email}
+                onChange={ (e) => {
+                    setEmail(e.target.value)
+                }}
             />
             <TextField
                 id="outlined-password"
@@ -54,6 +79,10 @@ const Login = () => {
                     }}
                 type="password"
                 fullWidth
+                value={password}
+                onChange={ (e) => {
+                    setPassword(e.target.value)
+                }}
             />
             <Button 
                 variant="contained"
@@ -62,9 +91,10 @@ const Login = () => {
                         textAlign: 'center',
                         background: theme.palette.primary.main,
                         fontWeight: 'bold'
-                    }}  
+                    }} 
+                onClick={() => submitLogin()} 
             >
-            Login
+            {loading ? 'Loading...' : 'Login'}
             </Button>
             <Typography sx={{ mt: 2,
                               textAlign: 'center'

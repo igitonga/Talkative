@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import axios from "axios";
 
 import {  
          TextField,
@@ -8,44 +7,26 @@ import {
          useTheme,
 } from "@mui/material";
 
-import Illustration from "../assets/landing.svg";
+import Illustration from "../../assets/landing.svg";
 
 import { useNavigate } from "react-router-dom";
+import { last } from "lodash";
 
 const SignUp = () => {
     const theme = useTheme();
     const navigate = useNavigate();
 
-    const [firstName, setFirstName] = useState(null);
-    const [lastName, setLastName] = useState(null);
-    const [email, setEmail] = useState(null);
-    const [password, setPassword] = useState(null);
-
-    const singnupHandler = (event) => {
-        event.preventDefault();
-
-        let data = {
-            firstName,
-            lastName,
-            email,
-            password
-        }
-
-        axios({
-            // Endpoint to send files
-            url: "http://localhost:8000/api/create-user",
-            method: "POST",
-            data
-        })
-            // Handle the response from backend here
-            .then((res) => {})
- 
-            // Catch errors if any
-            .catch((err) => {});
-    }
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     const loginNavigation = () => {
         navigate('/')
+    }
+
+    const submitSignup = (e) => {
+        e.preventDefault();
     }
 
     return(
@@ -76,6 +57,7 @@ const SignUp = () => {
                         }}
                     type="text"
                     fullWidth
+                    value={firstName}
                     onChange={(e)=>{
                         setFirstName(e.target.value)
                     }}
@@ -87,6 +69,7 @@ const SignUp = () => {
                         }}
                     type="text"
                     fullWidth
+                    value={lastName}
                     onChange={(e)=>{
                         setLastName(e.target.value)
                     }}
@@ -99,6 +82,7 @@ const SignUp = () => {
                     }}
                 type="email"
                 fullWidth
+                value={email}
                 onChange={(e)=>{
                     setEmail(e.target.value)
                 }}
@@ -110,18 +94,19 @@ const SignUp = () => {
                     }}
                 type="password"
                 fullWidth
+                value={password}
                 onChange={(e)=>{
                     setPassword(e.target.value)
                 }}
             />
             <Button 
                 variant="contained"
-                onClick={singnupHandler}
                 fullWidth
                 sx={{ my: 1,
                         textAlign: 'center',
                         background: theme.palette.primary.main,
                     }}  
+                onClick={() => submitSignup()} 
             >
             Sign Up
             </Button>
