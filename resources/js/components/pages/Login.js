@@ -1,4 +1,4 @@
-import React, {useEffect,useState} from "react";
+import React, { useState } from "react";
 
 import {  
          TextField,
@@ -21,8 +21,6 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
-
-    const { userData } = useSelector(state => state.user);
 
     const submitLogin = () => {
         if(email === '' || password === '') {

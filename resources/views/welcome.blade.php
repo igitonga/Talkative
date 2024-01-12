@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>LiveChat</title>
+        <title>Talkative</title>
 
         <link rel="icon" type="image/x-icon" href="/wagelyft_icon.svg">
         <link rel="preconnect" href="https://fonts.googleapis.com">
