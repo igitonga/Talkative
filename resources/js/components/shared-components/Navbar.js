@@ -121,7 +121,7 @@ export default function Navbar() {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box style={{ display: 'flex', }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
         <Toolbar>
