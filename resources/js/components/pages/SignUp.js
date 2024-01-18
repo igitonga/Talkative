@@ -10,23 +10,36 @@ import {
 import Illustration from "../../assets/landing.svg";
 
 import { useNavigate } from "react-router-dom";
-import { last } from "lodash";
+import { useDispatch } from "react-redux";
+import { registerUser } from "../../redux/userSlice";
 
 const SignUp = () => {
     const theme = useTheme();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const loginNavigation = () => {
-        navigate('/')
+        navigate('/login')
     }
 
-    const submitSignup = (e) => {
-        e.preventDefault();
+    const submitSignup = () => {
+        if(firstName === '' || lastName === '' || email === '' || password === '') {
+            return;
+        }
+        setLoading(true);
+        dispatch(registerUser({firstName, lastName, email, password}))
+
+        setFirstName('');
+        setLastName('');
+        setEmail('');
+        setPassword('');
+        setLoading(false);
     }
 
     return(
@@ -108,7 +121,7 @@ const SignUp = () => {
                     }}  
                 onClick={() => submitSignup()} 
             >
-            Sign Up
+            {loading ? 'Loading' : 'Sign Up'}
             </Button>
             <Typography sx={{ mt: 2,
                               textAlign: 'center'

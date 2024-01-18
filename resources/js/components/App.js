@@ -55,14 +55,14 @@ function App() {
     const navigate = useNavigate();
     const {loginStatus} = useSelector(state => state.user);
 
-    // useEffect(()=>{
-    //     if(loginStatus === 0){
-    //         navigate('/login')
-    //     }
-    //     else{
-    //         navigate('/')
-    //     }
-    // },[loginStatus]);
+    useEffect(()=>{
+        if(loginStatus === 0){
+            navigate('/login')
+        }
+        else{
+            navigate('/')
+        }
+    },[loginStatus]);
 
     return (
         <ThemeProvider theme={theme}>
