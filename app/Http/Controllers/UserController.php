@@ -7,6 +7,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use App\Models\User;
+use App\Events\UserEvent;
 use DB;
 
 class UserController extends Controller
@@ -40,7 +41,9 @@ class UserController extends Controller
             $user->password = Hash::make($request->password);
             $user->save();
 
+            UserEvent::dispatch($user);   
             DB::commit();
+
             return \response([
                 'status' => Response::HTTP_OK,
                 'message' => 'User registered successfully'
