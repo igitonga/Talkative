@@ -13,6 +13,9 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { registerUser } from "../../redux/userSlice";
 
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
 const SignUp = () => {
     const theme = useTheme();
     const navigate = useNavigate();
@@ -30,6 +33,7 @@ const SignUp = () => {
 
     const submitSignup = () => {
         if(firstName === '' || lastName === '' || email === '' || password === '') {
+            toast.error('You cannot leave fields empty')
             return;
         }
         setLoading(true);
@@ -118,6 +122,7 @@ const SignUp = () => {
                 sx={{ my: 1,
                         textAlign: 'center',
                         background: theme.palette.primary.main,
+                        fontWeight: 'bold',
                     }}  
                 onClick={() => submitSignup()} 
             >
@@ -128,6 +133,7 @@ const SignUp = () => {
                             }}>
                 Already registered? <button onClick={loginNavigation} style={{ color: theme.palette.primary.main }}>Login</button>
             </Typography>
+            <ToastContainer />
         </div>
     )
 }

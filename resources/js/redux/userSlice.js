@@ -72,7 +72,9 @@ export const userSlice = createSlice({
             );
           })
           .addCase(registerUser.fulfilled, (state, action) => {
-
+            if(action.payload.status !== 200){
+                toast.error(action.payload.message)
+            }
           })
           .addCase(registerUser.rejected, (state, action) => {
             toast.error(
