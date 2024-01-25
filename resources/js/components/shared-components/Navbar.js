@@ -15,15 +15,20 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
 import ContactsIcon from '@mui/icons-material/Contacts';
 import GroupIcon from '@mui/icons-material/Group';
 import SettingsIcon from '@mui/icons-material/Settings';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import CallIcon from '@mui/icons-material/Call';
+import LogoutIcon from '@mui/icons-material/Logout';
 import Typography from '@mui/material/Typography';
+
+import { useDispatch } from 'react-redux';
+import { logoutUser } from '../../redux/userSlice';
+
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const drawerWidth = 240;
 
@@ -72,45 +77,60 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'flex-end',
 }));
 
-const menuOptions = [
+export default function Navbar() {
+  const theme = useTheme();
+  const [open, setOpen] = React.useState(false);
+  const dispatch = useDispatch();
+
+  const menuOptions = [
     {
         id: 1,
         title: 'Contacts',
-        icon: <ContactsIcon />
+        icon: <ContactsIcon />,
+        action: null,
     },
     {
         id: 2,
         title: 'Groups',
-        icon: <GroupIcon />
+        icon: <GroupIcon />,
+        action: null,
     },
     {
         id: 3,
         title: 'Calls',
-        icon: <CallIcon />
+        icon: <CallIcon />,
+        action: null,
     },
     {
         id: 4,
         title: 'Settings',
-        icon: <SettingsIcon />
+        icon: <SettingsIcon />,
+        action: null,
     },
-]
+    {
+      id: 5,
+      title: 'Logout',
+      icon: <LogoutIcon />,
+      action: () => {
+        dispatch(logoutUser())
+      },
+    },
+  ]
 
-const menuOptions2 = [
+  const menuOptions2 = [
     {
         id: 1,
         title: 'Invite Friends',
-        icon: <PersonAddIcon />
+        icon: <PersonAddIcon />,
+        action: null,
     },
     {
         id: 2,
         title: 'Delete Account',
-        icon: <RemoveCircleIcon />
+        icon: <RemoveCircleIcon />,
+        action: null,
     },
-]
-
-export default function Navbar() {
-  const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  ]
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -123,6 +143,7 @@ export default function Navbar() {
   return (
     <Box style={{ display: 'flex', }}>
       <CssBaseline />
+      <ToastContainer />
       <AppBar position="fixed" open={open}>
         <Toolbar>
           <IconButton
@@ -161,7 +182,7 @@ export default function Navbar() {
         <List>
         {menuOptions.map((menu) => (
             <ListItem key={menu.id} disablePadding>
-              <ListItemButton>
+              <ListItemButton onClick={menu.action}>
                 <ListItemIcon>
                   {menu.icon}
                 </ListItemIcon>

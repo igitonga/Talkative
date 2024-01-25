@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\User;
 use App\Events\UserEvent;
 use DB;
@@ -15,7 +16,7 @@ class UserController extends Controller
     public function __construct()
     {
         # By default we are using here auth:api middleware
-        $this->middleware('auth:api', ['except' => ['login','register']]);
+        $this->middleware('api', ['except' => ['login','register']]);
     }
 
     protected function respondWithToken($token)
@@ -23,6 +24,7 @@ class UserController extends Controller
         # This function is used to make JSON response with new
         # access token of current user
         return response()->json([
+            'status' => Response::HTTP_OK,
             'access_token' => $token,
             'token_type' => 'Bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
@@ -70,6 +72,24 @@ class UserController extends Controller
             }
     
             return $this->respondWithToken($token);
+        }
+        catch(Exception $e){
+            return \response([
+                'status' => Response::HTTP_NOT_FOUND,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function logout(){
+        try{
+            JWTAuth::parseToken()->invalidate(true);
+            auth()->logout();
+
+            return \response([
+                'status' => Response::HTTP_OK,
+                'message' => 'Logout successfully'
+            ]);  
         }
         catch(Exception $e){
             return \response([

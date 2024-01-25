@@ -34,6 +34,13 @@ export const registerUser = createAsyncThunk(
     }
 );
 
+export const logoutUser = createAsyncThunk(
+    'users/logoutUser',
+    async () => {
+        return await axios.get('api/logout');
+    }
+)
+
 export const userSlice = createSlice({
     name: 'user',
     initialState: {
@@ -71,6 +78,7 @@ export const userSlice = createSlice({
                 : 'Internal server error. Please try again later'
             );
           })
+
           .addCase(registerUser.fulfilled, (state, action) => {
             if(action.payload.status !== 200){
                 toast.error(action.payload.message)
@@ -82,7 +90,21 @@ export const userSlice = createSlice({
                 ? action.payload
                 : 'Internal server error. Please try again later'
             );
-          });
+          })
+
+          .addCase(logoutUser.fulfilled, (state, action) => {
+            state.jwtAccessToken = null;
+            state.userData = null;
+            state.loginStatus = 0; 
+          })
+          .addCase(logoutUser.rejected, (state, action) => {
+            toast.error(
+              typeof action.payload === 'string'
+                ? action.payload
+                : 'Internal server error. Please try again later'
+            );
+          })
+
       },
 });
 
