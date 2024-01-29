@@ -34,6 +34,18 @@ export const registerUser = createAsyncThunk(
     }
 );
 
+export const updateUser = createAsyncThunk(
+    'users/updateUser',
+    async (data, { rejectWithValue }) => {
+        try {
+            let response = await axios.post('api/update-user', data);
+            return response.data
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
 export const logoutUser = createAsyncThunk(
     'users/logoutUser',
     async () => {
@@ -83,6 +95,9 @@ export const userSlice = createSlice({
             if(action.payload.status !== 200){
                 toast.error(action.payload.message)
             }
+            if(action.payload.status === 200){
+                toast.success('Successful registration, you can now login')
+            }
           })
           .addCase(registerUser.rejected, (state, action) => {
             toast.error(
@@ -98,6 +113,22 @@ export const userSlice = createSlice({
             state.loginStatus = 0; 
           })
           .addCase(logoutUser.rejected, (state, action) => {
+            toast.error(
+              typeof action.payload === 'string'
+                ? action.payload
+                : 'Internal server error. Please try again later'
+            );
+          })
+
+          .addCase(updateUser.fulfilled, (state, action) => {
+            if(action.payload.status !== 200){
+                toast.error(action.payload.message)
+            }
+            if(action.payload.status === 200){
+                toast.success('Profile updated successfully')
+            }
+          })
+          .addCase(updateUser.rejected, (state, action) => {
             toast.error(
               typeof action.payload === 'string'
                 ? action.payload

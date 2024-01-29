@@ -7,7 +7,7 @@ const ChatPreview = () => {
 
     return(
         <div className="flex p-2 items-center" style={{ borderBottom: `1px solid ${theme.palette.background.paper}` }}>
-            <AccountCircle color="action" sx={{ fontSize: '40px' }}/>
+            <AccountCircle color="action" sx={{ fontSize: '50px' }}/>
             <div className="ml-3">
                 <p style={{ fontWeight: 'bold' }}>Ian Gitonga</p>
                 <p style={{ fontSize: '12px' }}> Lorem ipusm kadhaa </p>

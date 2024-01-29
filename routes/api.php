@@ -24,5 +24,5 @@ Route::post('register', [UserController::class, 'register']);
 Route::get('logout', [UserController::class, 'logout']);
 
 Route::group(['middleware' => 'api'], function ($router) {
-    
+    Route::post('update-user', [UserController::class, 'update']);  
 });

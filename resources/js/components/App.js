@@ -9,6 +9,8 @@ import store from "../store"
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import Dashboard from './pages/Dashboard';
+import Profile from './pages/Profile';
+import Navbar from './shared-components/Navbar';
 
 const theme = createTheme({
     palette: {
@@ -67,9 +69,13 @@ function App() {
     return (
         <ThemeProvider theme={theme}>
             <Routes>
-                <Route path='/' element={<Dashboard />} />
                 <Route path='login' element={<Login />} />
                 <Route path='sign-up' element={<SignUp />} />
+
+                <Route path='/' element={<Navbar />}>
+                    <Route path='/' element={<Dashboard />} />
+                    <Route path='profile' element={<Profile />} />
+                </Route>
             </Routes>
         </ThemeProvider>
     );

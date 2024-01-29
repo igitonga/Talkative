@@ -98,4 +98,32 @@ class UserController extends Controller
             ]);
         }
     }
+
+    public function update(Request $request){
+        try{
+            DB::beginTransaction();
+
+            $user = User::find(auth()->user()->id);
+
+            $user->first_name = $request->firstName;
+            $user->last_name = $request->lastName;
+            $user->email = $request->email;
+            $user->dob = $request->dob;
+            $user->gender = $request->gender;
+            $user->country = $request->country;
+            $user->save(); 
+
+            DB::commit();
+            return \response([
+                'status' => Response::HTTP_OK,
+                'message' => 'Profile update successfully'
+            ]);
+        }
+        catch(Exception $e){
+            return \response([
+                'status' => Response::HTTP_NOT_FOUND,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
 }
