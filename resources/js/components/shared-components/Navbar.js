@@ -15,8 +15,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import ContactsIcon from '@mui/icons-material/Contacts';
-import GroupIcon from '@mui/icons-material/Group';
+import ChatIcon from '@mui/icons-material/Chat';import GroupIcon from '@mui/icons-material/Group';
 import Person2Icon from '@mui/icons-material/Person2';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
@@ -97,9 +96,12 @@ export default function Navbar() {
   },
     {
         id: 1,
-        title: 'Contacts',
-        icon: <ContactsIcon />,
-        action: null,
+        title: 'Chats',
+        icon: <ChatIcon />,
+        action: () => {
+          navigate('/')
+          setOpen(false)
+        },
     },
     {
         id: 2,

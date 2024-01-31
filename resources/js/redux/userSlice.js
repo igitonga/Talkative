@@ -6,6 +6,7 @@ export const loginUser = createAsyncThunk(
     'users/loginUser',
     async (data, { rejectWithValue }) => {
         try {
+            toast.loading('Loading...', { toastId: 'login-user' });
             let response = await axios.post('api/login', {
                 email: data.email,
                 password: data.password
@@ -21,6 +22,7 @@ export const registerUser = createAsyncThunk(
     'users/registerUser',
     async (data, { rejectWithValue }) => {
         try {
+            toast.loading('Loading...', { toastId: 'register-user' });
             let response = await axios.post('api/register', {
                 firstName: data.firstName,
                 lastName: data.lastName,
@@ -38,6 +40,7 @@ export const updateUser = createAsyncThunk(
     'users/updateUser',
     async (data, { rejectWithValue }) => {
         try {
+            toast.loading('Loading...', { toastId: 'update-user' });
             let response = await axios.post('api/update-user', data);
             return response.data
         } catch (error) {
@@ -71,7 +74,10 @@ export const userSlice = createSlice({
           .addCase(loginUser.fulfilled, (state, action) => {
             if(action.payload.status !== 200){
                 state.loginStatus = 0;
-                toast.error(action.payload.message)
+                toast.update(
+                    'login-user',
+                    { render: typeof action.payload.message === 'string' ? action.payload.message : 'Internal server error', type: 'error', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
+                )
             }
 
             if(action.payload.status === 200){
@@ -80,30 +86,33 @@ export const userSlice = createSlice({
                 state.loginStatus = 1;
         
                 axios.defaults.headers.common.Authorization = `Bearer ${action.payload.access_token}`;
+                toast.update(
+                    'login-user', {isLoading: false} 
+                )
             }
 
           })
           .addCase(loginUser.rejected, (state, action) => {
-            toast.error(
-              typeof action.payload === 'string'
-                ? action.payload
-                : 'Internal server error. Please try again later'
+            toast.update('login-user',
+                { render: typeof action.payload === 'string' ? action.payload: 'Internal server error. Please try again later', type: 'error', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
             );
           })
 
           .addCase(registerUser.fulfilled, (state, action) => {
             if(action.payload.status !== 200){
-                toast.error(action.payload.message)
+                toast.update('register-user',
+                    { render: action.payload.message, type: 'error', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
+                )
             }
             if(action.payload.status === 200){
-                toast.success('Successful registration, you can now login')
+                toast.update('register-user',
+                    { render: action.payload.message, type: 'success', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
+                )
             }
           })
           .addCase(registerUser.rejected, (state, action) => {
-            toast.error(
-              typeof action.payload === 'string'
-                ? action.payload
-                : 'Internal server error. Please try again later'
+            toast.update('register-user',
+                { render: typeof action.payload === 'string' ? action.payload: 'Internal server error. Please try again later', type: 'error', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
             );
           })
 
@@ -111,28 +120,31 @@ export const userSlice = createSlice({
             state.jwtAccessToken = null;
             state.userData = null;
             state.loginStatus = 0; 
+            toast.update('logout-user',
+                { isLoading: false }
+            )
           })
           .addCase(logoutUser.rejected, (state, action) => {
-            toast.error(
-              typeof action.payload === 'string'
-                ? action.payload
-                : 'Internal server error. Please try again later'
+            toast.update('logout-user',
+                { render: typeof action.payload === 'string' ? action.payload: 'Internal server error. Please try again later', type: 'error', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
             );
           })
 
           .addCase(updateUser.fulfilled, (state, action) => {
             if(action.payload.status !== 200){
-                toast.error(action.payload.message)
+                toast.update('register-user',
+                    { render: action.payload.message, type: 'error', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
+                )
             }
             if(action.payload.status === 200){
-                toast.success('Profile updated successfully')
+                toast.update('update-user',
+                    { render: action.payload.message, type: 'success', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
+                )
             }
           })
           .addCase(updateUser.rejected, (state, action) => {
-            toast.error(
-              typeof action.payload === 'string'
-                ? action.payload
-                : 'Internal server error. Please try again later'
+            toast.update('update-user',
+                { render: typeof action.payload === 'string' ? action.payload: 'Internal server error. Please try again later', type: 'error', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
             );
           })
 
