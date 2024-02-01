@@ -23,8 +23,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('login', [UserController::class, 'login']);
 Route::post('register', [UserController::class, 'register']);
 Route::get('logout', [UserController::class, 'logout']);
-Route::post('send-message', [ChatController::class, 'message']); 
+ 
 Route::group(['middleware' => 'api'], function ($router) {
     Route::post('update-user', [UserController::class, 'update']); 
+    Route::get('get-users', [UserController::class, 'getUsers']);
+    
     Route::post('send-message', [ChatController::class, 'message']); 
 });

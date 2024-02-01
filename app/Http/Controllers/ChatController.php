@@ -10,8 +10,6 @@ class ChatController extends Controller
 {
     public function message(Request $request){
         try{
-            //event(new MessageEvent($request->message));
-            
             MessageEvent::dispatch('nooo');
             return \response([
                 'status' => Response::HTTP_OK,

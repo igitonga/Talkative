@@ -126,4 +126,22 @@ class UserController extends Controller
             ]);
         }
     }
+
+    public function getUsers(){
+        try{
+            $users = User::all();
+
+            return \response([
+                'status' => Response::HTTP_OK,
+                'message' => 'All users',
+                'data' => $users,
+            ]);
+        }
+        catch(Exception $e){
+            return \response([
+                'status' => Response::HTTP_NOT_FOUND,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
 }

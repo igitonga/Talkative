@@ -49,6 +49,19 @@ export const updateUser = createAsyncThunk(
     }
 );
 
+export const getUsers = createAsyncThunk(
+    'users/getUsers',
+    async (rejectWithValue) => {
+        try {
+            toast.loading('Getting users...', { toastId: 'get-users' });
+            let response = await axios.get('api/get-users');
+            return response.data
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
 export const logoutUser = createAsyncThunk(
     'users/logoutUser',
     async () => {
@@ -63,6 +76,7 @@ export const userSlice = createSlice({
         jwtAccessToken: null,
         loginStatus: 0,
         userDataError: null,
+        users: null,
     },
     reducers:{
         setJwtAccessToken: (state, action) => {
@@ -120,9 +134,7 @@ export const userSlice = createSlice({
             state.jwtAccessToken = null;
             state.userData = null;
             state.loginStatus = 0; 
-            toast.update('logout-user',
-                { isLoading: false }
-            )
+            toast.dismiss('logout-user')
           })
           .addCase(logoutUser.rejected, (state, action) => {
             toast.update('logout-user',
@@ -144,7 +156,24 @@ export const userSlice = createSlice({
           })
           .addCase(updateUser.rejected, (state, action) => {
             toast.update('update-user',
-                { render: typeof action.payload === 'string' ? action.payload: 'Internal server error. Please try again later', type: 'error', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
+                { render: typeof action.payload === 'string' ? action.payload.message : 'Internal server error. Please try again later', type: 'error', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
+            );
+          })
+
+          .addCase(getUsers.fulfilled, (state, action) => {
+            if(action.payload.status !== 200){
+                toast.update('get-users',
+                    { render: action.payload.message, type: 'error', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
+                )
+            }
+            if(action.payload.status === 200){
+                state.users = action.payload.data
+                toast.dismiss('get-users')
+            } 
+          })
+          .addCase(getUsers.rejected, (state, action) => {
+            toast.update('get-users',
+                { render: typeof action.payload === 'string' ? action.payload.message : 'Internal server error. Please try again later', type: 'error', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
             );
           })
 
