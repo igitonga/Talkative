@@ -45,14 +45,29 @@ const Profile = () => {
             <span className="flex justify-center">
                 <AccountCircle color="action" sx={{ fontSize: '120px' }}/>
             </span>
-            <span className="flex justify-center my-4 p-4" style={{ boxShadow: `0px 0px 5px ${theme.palette.background.paper}`, borderRadius: '10px' }}>
+            <div className="my-4 p-4" style={{ boxShadow: `0px 0px 10px ${theme.palette.background.paper}`, borderRadius: '10px' }}>
                 <Typography sx={{ fontSize: '20px',
                               color: theme.palette.primary.main,
-                              fontWeight: 'bold'
+                              fontWeight: 'bold',
+                              textAlign: 'center'
                             }}>
                     {firstName+" "+lastName}
                 </Typography>
-            </span>
+                <span className="flex justify-between mt-2">
+                    <span>
+                        <h5 style={{ opacity: 0.5, fontSize: '12px' }}>Requests received</h5>
+                        <p style={{ textAlign: 'center', fontWeight: 'bold' }}>2</p>
+                    </span>
+                    <span>
+                        <h5 style={{ opacity: 0.5, fontSize: '12px' }}>Requests sent</h5>
+                        <p style={{ textAlign: 'center', fontWeight: 'bold' }}>2</p>
+                    </span>
+                    <span>
+                        <h5 style={{ opacity: 0.5, fontSize: '12px' }}>Connections</h5>
+                        <p style={{ textAlign: 'center', fontWeight: 'bold' }}>2</p>
+                    </span>
+                </span>
+            </div>
             <span className="">
                 <div className="flex mb-2">
                     <TextField
