@@ -11,7 +11,9 @@
         "laravel/framework": "^8.75",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
-        "pusher/pusher-php-server": "^7.0"
+        "laravel/ui": "^3.4",
+        "pusher/pusher-php-server": "^7.2",
+        "tymon/jwt-auth": "^1.0@dev"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
