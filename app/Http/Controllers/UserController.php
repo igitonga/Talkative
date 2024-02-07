@@ -16,7 +16,7 @@ class UserController extends Controller
     public function __construct()
     {
         # By default we are using here auth:api middleware
-        $this->middleware('api', ['except' => ['login','register']]);
+        $this->middleware('auth:api', ['except' => ['login']]);
     }
 
     protected function respondWithToken($token)
@@ -79,6 +79,11 @@ class UserController extends Controller
                 'message' => $e->getMessage(),
             ]);
         }
+    }
+
+    public function refresh()
+    {
+        return $this->respondWithToken(auth()->refresh());
     }
 
     public function logout(){
