@@ -7,7 +7,7 @@ export const loginUser = createAsyncThunk(
     async (data, { rejectWithValue }) => {
         try {
             toast.loading('Loading...', { toastId: 'login-user' });
-            let response = await axios.post('api/login', {
+            let response = await axios.post('api/auth/login', {
                 email: data.email,
                 password: data.password
             });
@@ -23,7 +23,7 @@ export const registerUser = createAsyncThunk(
     async (data, { rejectWithValue }) => {
         try {
             toast.loading('Loading...', { toastId: 'register-user' });
-            let response = await axios.post('api/register', {
+            let response = await axios.post('api/auth/register', {
                 firstName: data.firstName,
                 lastName: data.lastName,
                 email: data.email,
@@ -35,6 +35,13 @@ export const registerUser = createAsyncThunk(
         }
     }
 );
+
+export const logoutUser = createAsyncThunk(
+    'users/logoutUser',
+    async () => {
+        return await axios.get('api/auth/logout');
+    }
+)
 
 export const updateUser = createAsyncThunk(
     'users/updateUser',
@@ -62,20 +69,12 @@ export const getUsers = createAsyncThunk(
     }
 );
 
-export const logoutUser = createAsyncThunk(
-    'users/logoutUser',
-    async () => {
-        return await axios.get('api/logout');
-    }
-)
-
 export const userSlice = createSlice({
     name: 'user',
     initialState: {
         userData: null,
         jwtAccessToken: null,
         loginStatus: 0,
-        userDataError: null,
         users: null,
     },
     reducers:{
@@ -100,9 +99,7 @@ export const userSlice = createSlice({
                 state.loginStatus = 1;
         
                 axios.defaults.headers.common.Authorization = `Bearer ${action.payload.access_token}`;
-                toast.update(
-                    'login-user', {isLoading: false} 
-                )
+                toast.dismiss('login-user')
             }
 
           })

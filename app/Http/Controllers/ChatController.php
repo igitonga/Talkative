@@ -7,7 +7,6 @@ use Illuminate\Http\Response;
 use App\Events\MessageEvent;
 use App\Models\UserConnection;
 use DB;
-use Auth;
 
 class ChatController extends Controller
 {
@@ -35,12 +34,15 @@ class ChatController extends Controller
 
     public function getStats(Request $request){
         try{
-            $requestsSent = UserConnection::where('party_A', Auth::user()->id)->count();
-            $requestsReceived = UserConnection::where('party_B', Auth::user()->id)->count();
+            $requestsSent = UserConnection::where('party_A', auth()->user()->id)->count();
+            $requestsReceived = UserConnection::where('party_B', auth()->user()->id)->count();
+            $connections = UserConnection::where('party_A', auth()->user()->id)->orWhere('party_B', auth()->user()->id)
+                            ->where('status', 'accepted')->count();
 
             $data = array(
                 'requestsSent' => $requestsSent,
                 'requestsReceived' => $requestsReceived,
+                'connections' => $connections,
             );
 
             return \response([
