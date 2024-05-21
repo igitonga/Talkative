@@ -60,7 +60,7 @@ class ChatController extends Controller
     
     public function message(Request $request){
         try{
-            MessageEvent::dispatch('nooo');
+            MessageEvent::dispatch($request->message);
             return \response([
                 'status' => Response::HTTP_OK,
                 'message' => 'Message sent',

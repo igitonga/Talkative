@@ -10,7 +10,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\User;
 use App\Events\UserEvent;
 use DB;
-
+use Auth;
 class UserController extends Controller
 {
     public function __construct()
@@ -59,7 +59,7 @@ class UserController extends Controller
         }
     }
 
-    public function login()
+    public function login(Request $request)
     {
         try{
             $credentials = request(['email', 'password']);
@@ -70,6 +70,8 @@ class UserController extends Controller
                     'message' => 'Wrong email or password',
                 ]);
             }
+
+            $request->session()->put('access_token', $token);
     
             return $this->respondWithToken($token);
         }
@@ -95,6 +97,35 @@ class UserController extends Controller
                 'status' => Response::HTTP_OK,
                 'message' => 'Logout successfully'
             ]);  
+        }
+        catch(Exception $e){
+            return \response([
+                'status' => Response::HTTP_NOT_FOUND,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function retrieveAccessToken(Request $request) {
+        try{
+            if($request->session()->has('access_token')) {
+                $user = Auth::user();
+                $data['user'] = $user;
+                $data['access_token'] = $user->createToken('access_token')->accessToken;
+
+                $request->session()->put('access_token', $data['access_token']);
+
+                return \response([
+                    'status' => Response::HTTP_OK,
+                    'message' => $data
+                ]); 
+            } 
+            else {
+                return response([
+                    'status' => Response::HTTP_UNAUTHORIZED,
+                    'message' =>'You need to login'
+                ]); 
+            }
         }
         catch(Exception $e){
             return \response([
@@ -134,7 +165,7 @@ class UserController extends Controller
 
     public function getUsers(){
         try{
-            $users = User::all();
+            $users = User::where('id', '!=', auth()->user()->id)->get();
 
             return \response([
                 'status' => Response::HTTP_OK,

@@ -9,6 +9,20 @@ export const requestsCount = createAsyncThunk(
     }
 )
 
+export const sendMessage = createAsyncThunk(
+    'chat/sendMessage',
+    async (data, {rejectWithValue}) => {
+        console.log(data)
+        try{
+            let response = await axios.post('api/send-message', {message: data.message});
+            return response.data 
+        }
+        catch(error){
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
 export const chatSlice = createSlice({
     name: 'chat',
     initialState: {
@@ -26,6 +40,15 @@ export const chatSlice = createSlice({
            // toast.error(action.payload.message)
           })
           .addCase(requestsCount.rejected, (state, action) => {
+            toast.error(action.payload.message)
+          })
+
+          .addCase(sendMessage.fulfilled, (state, action) => {
+            if(action.payload.status === 200){
+                
+            }
+          })
+          .addCase(sendMessage.rejected, (state, action) => {
             toast.error(action.payload.message)
           })
 

@@ -6,7 +6,6 @@ export const loginUser = createAsyncThunk(
     'users/loginUser',
     async (data, { rejectWithValue }) => {
         try {
-            toast.loading('Loading...', { toastId: 'login-user' });
             let response = await axios.post('api/auth/login', {
                 email: data.email,
                 password: data.password
@@ -35,6 +34,20 @@ export const registerUser = createAsyncThunk(
         }
     }
 );
+
+export const retrieveAccessToken = createAsyncThunk(
+    'users/retrieveAccessToken',
+    async (rejectWithValue) => {
+        console.log('gooo')
+        try{
+            let response = await axios.get('api/retrieve-access-token');
+            return response.data 
+        }
+        catch(error){
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
 
 export const logoutUser = createAsyncThunk(
     'users/logoutUser',
@@ -87,8 +100,7 @@ export const userSlice = createSlice({
           .addCase(loginUser.fulfilled, (state, action) => {
             if(action.payload.status !== 200){
                 state.loginStatus = 0;
-                toast.update(
-                    'login-user',
+                toast.error(
                     { render: typeof action.payload.message === 'string' ? action.payload.message : 'Internal server error', type: 'error', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
                 )
             }
@@ -99,12 +111,11 @@ export const userSlice = createSlice({
                 state.loginStatus = 1;
         
                 axios.defaults.headers.common.Authorization = `Bearer ${action.payload.access_token}`;
-                toast.dismiss('login-user')
             }
 
           })
           .addCase(loginUser.rejected, (state, action) => {
-            toast.update('login-user',
+            toast.error(
                 { render: typeof action.payload === 'string' ? action.payload: 'Internal server error. Please try again later', type: 'error', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
             );
           })
@@ -137,6 +148,17 @@ export const userSlice = createSlice({
             toast.update('logout-user',
                 { render: typeof action.payload === 'string' ? action.payload: 'Internal server error. Please try again later', type: 'error', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
             );
+          })
+
+          .addCase(retrieveAccessToken.fulfilled, (state, action) => {
+            state.jwtAccessToken = action.payload.access_token;
+            state.userData = action.payload.user;
+            state.loginStatus = 1;
+
+            axios.defaults.headers.common.Authorization = `Bearer ${action.payload.access_token}`;
+          })
+          .addCase(retrieveAccessToken.rejected, (state, action) => {
+
           })
 
           .addCase(updateUser.fulfilled, (state, action) => {
