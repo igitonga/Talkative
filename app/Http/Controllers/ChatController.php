@@ -32,30 +32,19 @@ class ChatController extends Controller
         }
     }
 
-    public function getStats(Request $request){
-        try{
-            $requestsSent = UserConnection::where('party_A', auth()->user()->id)->count();
-            $requestsReceived = UserConnection::where('party_B', auth()->user()->id)->count();
-            $connections = UserConnection::where('party_A', auth()->user()->id)->orWhere('party_B', auth()->user()->id)
-                            ->where('status', 'accepted')->count();
+    public function getStats($user){
+        $requestsSent = UserConnection::where('party_A', $user->id)->count();
+        $requestsReceived = UserConnection::where('party_B', $user->id)->count();
+        $connections = UserConnection::where('party_A', $user->id)->orWhere('party_B', $user->id)
+                        ->where('status', 'accepted')->count();
 
-            $data = array(
-                'requestsSent' => $requestsSent,
-                'requestsReceived' => $requestsReceived,
-                'connections' => $connections,
-            );
+        $data = array(
+            'requestsSent' => $requestsSent,
+            'requestsReceived' => $requestsReceived,
+            'connections' => $connections,
+        );
 
-            return \response([
-                'status' => Response::HTTP_OK,
-                'data' => $data,
-            ]);
-        }
-        catch(Exception $e){
-            return \response([
-                'status' => Response::HTTP_NOT_FOUND,
-                'message' => $e->getMessage(),
-            ]);
-        }
+        return $data;
     }
     
     public function message(Request $request){

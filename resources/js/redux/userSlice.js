@@ -88,7 +88,8 @@ export const userSlice = createSlice({
         userData: null,
         jwtAccessToken: null,
         loginStatus: 0,
-        users: null,
+        connectData: null,
+        connections: [],
     },
     reducers:{
         setJwtAccessToken: (state, action) => {
@@ -100,14 +101,14 @@ export const userSlice = createSlice({
           .addCase(loginUser.fulfilled, (state, action) => {
             if(action.payload.status !== 200){
                 state.loginStatus = 0;
-                toast.error(
-                    { render: typeof action.payload.message === 'string' ? action.payload.message : 'Internal server error', type: 'error', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
-                )
+                toast.error(action.payload.message);
             }
 
             if(action.payload.status === 200){
-                state.jwtAccessToken = action.payload.access_token;
-                state.userData = action.payload.user;
+                state.jwtAccessToken = action.payload.data.accessToken;
+                state.userData = action.payload.data.user;
+                state.connectData = action.payload.data.connectsStats;
+                state.connections = action.payload.data.connections;
                 state.loginStatus = 1;
         
                 axios.defaults.headers.common.Authorization = `Bearer ${action.payload.access_token}`;

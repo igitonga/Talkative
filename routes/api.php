@@ -30,7 +30,6 @@ Route::middleware('auth')->group(function () {
     Route::post('update-user', [UserController::class, 'update']); 
     Route::get('get-users', [UserController::class, 'getUsers']);
 
-    Route::get('get-requests-count', [ChatController::class, 'getStats']); 
     Route::post('send-message', [ChatController::class, 'message']); 
 });
  

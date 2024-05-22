@@ -13,9 +13,6 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../../redux/userSlice";
 
-import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-
 const Login = () => {
     const theme = useTheme();
     const navigate = useNavigate();
@@ -23,19 +20,13 @@ const Login = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(false);
 
     const submitLogin = () => {
         if(email === '' || password === '') {
             toast.error('You cannot leave fields empty');
             return;
         }
-        setLoading(true);
         dispatch(loginUser({ email, password }));
-
-        setEmail('');
-        setPassword('');
-        setLoading(false)
     }
 
     const signupNavigation = () => {
@@ -96,14 +87,13 @@ const Login = () => {
                     }} 
                 onClick={() => submitLogin()} 
             >
-            {loading ? 'Loading...' : 'Login'}
+                Login
             </Button>
             <Typography sx={{ mt: 2,
                               textAlign: 'center'
                             }}>
                 Not yet registered? <button onClick={signupNavigation} style={{ color: theme.palette.primary.main }}>Sign Up</button>
             </Typography>
-            <ToastContainer />
         </div>
     )
 }

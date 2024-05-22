@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\ChatController;
 use Illuminate\Validation\Rule;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\User;
@@ -17,6 +18,7 @@ class UserController extends Controller
     {
         # By default we are using here auth:api middleware
         $this->middleware('auth:api', ['except' => ['login']]);
+        $this->chatController = new ChatController;
     }
 
     protected function respondWithToken($token)
@@ -28,7 +30,6 @@ class UserController extends Controller
             'access_token' => $token,
             'token_type' => 'Bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
-            'user' => auth()->user()
         ]);
     }
 
@@ -72,8 +73,20 @@ class UserController extends Controller
             }
 
             $request->session()->put('access_token', $token);
-    
-            return $this->respondWithToken($token);
+            $user = Auth::user();
+            $respString = $this->respondWithToken($token);
+            $respJson = \json_encode($respString);
+            $respArray = \json_decode($respJson);
+
+            $data['acccessToken'] = $respArray->original->access_token;
+            $data['user'] = $user;
+            $data['connectsStats'] = $this->chatController->getStats($user);
+            $data['connections'] = [];
+
+            return \response(array(
+                'status' => Response::HTTP_OK,
+                'data' => $data,
+            ));
         }
         catch(Exception $e){
             return \response([

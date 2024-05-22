@@ -12,19 +12,19 @@ import { getUsers } from "../../redux/userSlice";
 const Dashboard = () => {
     const theme = useTheme();
     const dispatch = useDispatch();
-    const { users } = useSelector(state => state.user)
-
+    const { connections } = useSelector(state => state.user)
+console.log(connections.length)
     useEffect(() => {
-        dispatch(getUsers())
+        //dispatch(getUsers())
     },[]);
 
     return(
         <>
-          {users !== null && users.map((user)=> (
+          {/* {users !== null && users.map((user)=> (
             <ChatPreview key={user.id}
                          name={user.first_name+" "+user.last_name} 
                          text="Lorem ipsum all the way" />
-          ))} 
+          ))}  */}
           <Box sx={{ '& > :not(style)': { m: 1 }, position: 'fixed', bottom: 0, width: '100%', display: 'flex', justifyContent: 'flex-end' }}>
             <Fab color="primary" aria-label="add">
               <AddIcon />

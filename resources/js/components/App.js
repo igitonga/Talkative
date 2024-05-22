@@ -17,6 +17,9 @@ import Navbar from './shared-components/Navbar';
 
 import { retrieveAccessToken } from '../redux/userSlice';
 
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const theme = createTheme({
     palette: {
         primary: {
@@ -100,6 +103,14 @@ function App() {
                     <Route path='/chat' element={<Chat />} />
                 </Route>
             </Routes>
+
+            {/* For notifications */}
+            <ToastContainer
+                hideProgressBar
+                theme='colored'
+                position='top-right'
+                autoClose={2000}
+            />
         </ThemeProvider>
     );
 }

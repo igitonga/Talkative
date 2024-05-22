@@ -12,12 +12,11 @@ import { updateUser } from "../../redux/userSlice";
 import { requestsCount } from "../../redux/chatSlice";
 
 import { ToastContainer } from "react-toastify";
-import { set } from "lodash";
 
 const Profile = () => {
     const theme = useTheme()
     const dispatch = useDispatch()
-    const { userData } = useSelector(state => state.user)
+    const { userData, connectData } = useSelector(state => state.user)
     const { requestsData } = useSelector(state => state.chat)
 
     const [loading, setLoading] = useState(false)
@@ -43,10 +42,6 @@ const Profile = () => {
         setLoading(false)
     }
 
-    useEffect(()=>{
-        dispatch(requestsCount())
-    },[])
-
     return(
         <div className="px-4">
             <span className="flex justify-center">
@@ -63,15 +58,15 @@ const Profile = () => {
                 <span className="flex justify-between mt-2">
                     <span>
                         <h5 style={{ opacity: 0.5, fontSize: '12px' }}>Requests received</h5>
-                        <p style={{ textAlign: 'center', fontWeight: 'bold' }}>{requestsData != null ? requestsCount.requestsReceived : '...'}</p>
+                        <p style={{ textAlign: 'center', fontWeight: 'bold' }}>{connectData.requestsReceived}</p>
                     </span>
                     <span>
                         <h5 style={{ opacity: 0.5, fontSize: '12px' }}>Requests sent</h5>
-                        <p style={{ textAlign: 'center', fontWeight: 'bold' }}>{requestsData != null ? requestsCount.requestsSent : '...'}</p>
+                        <p style={{ textAlign: 'center', fontWeight: 'bold' }}>{connectData.requestsSent}</p>
                     </span>
                     <span>
                         <h5 style={{ opacity: 0.5, fontSize: '12px' }}>Connections</h5>
-                        <p style={{ textAlign: 'center', fontWeight: 'bold' }}>{requestsData != null ? requestsCount.connections : '...'}</p>
+                        <p style={{ textAlign: 'center', fontWeight: 'bold' }}>{connectData.connections}</p>
                     </span>
                 </span>
             </div>
@@ -110,7 +105,6 @@ const Profile = () => {
                 />
                 <TextField
                     id="outlined-dob"
-                    label="Date of birth"
                     sx={{ my: 1
                         }}
                     type="date"
