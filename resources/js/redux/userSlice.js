@@ -6,7 +6,8 @@ export const loginUser = createAsyncThunk(
     'users/loginUser',
     async (data, { rejectWithValue }) => {
         try {
-            let response = await axios.post('api/auth/login', {
+            toast.loading('Logging in...', { toastId: 'login-user' });
+            let response = await axios.post('api/login', {
                 email: data.email,
                 password: data.password
             });
@@ -21,8 +22,8 @@ export const registerUser = createAsyncThunk(
     'users/registerUser',
     async (data, { rejectWithValue }) => {
         try {
-            toast.loading('Loading...', { toastId: 'register-user' });
-            let response = await axios.post('api/auth/register', {
+            toast.loading('Registering...', { toastId: 'register-user' });
+            let response = await axios.post('api/register', {
                 firstName: data.firstName,
                 lastName: data.lastName,
                 email: data.email,
@@ -52,9 +53,9 @@ export const retrieveAccessToken = createAsyncThunk(
 export const logoutUser = createAsyncThunk(
     'users/logoutUser',
     async () => {
-        return await axios.get('api/auth/logout');
+        return await axios.get('api/logout');
     }
-)
+);
 
 export const updateUser = createAsyncThunk(
     'users/updateUser',
@@ -73,7 +74,6 @@ export const getUsers = createAsyncThunk(
     'users/getUsers',
     async (rejectWithValue) => {
         try {
-            toast.loading('Getting users...', { toastId: 'get-users' });
             let response = await axios.get('api/get-users');
             return response.data
         } catch (error) {
@@ -90,52 +90,34 @@ export const userSlice = createSlice({
         loginStatus: 0,
         connectData: null,
         connections: [],
+        users: [],
     },
     reducers:{
-        setJwtAccessToken: (state, action) => {
-            state.jwtAccessToken = action.payload;
-        },
     },
     extraReducers: (builder) => {
         builder
           .addCase(loginUser.fulfilled, (state, action) => {
-            if(action.payload.status !== 200){
-                state.loginStatus = 0;
-                toast.error(action.payload.message);
-            }
-
-            if(action.payload.status === 200){
-                state.jwtAccessToken = action.payload.data.accessToken;
-                state.userData = action.payload.data.user;
-                state.connectData = action.payload.data.connectsStats;
-                state.connections = action.payload.data.connections;
-                state.loginStatus = 1;
-        
-                axios.defaults.headers.common.Authorization = `Bearer ${action.payload.access_token}`;
-            }
-
+            state.userData = action.payload.data.user;
+            state.jwtAccessToken = action.payload.data.accessToken;
+            state.connectData = action.payload.data.connectsStats;
+            state.connections = action.payload.data.connections;
+            state.loginStatus = 1;
+    
+            axios.defaults.headers.common.Authorization = `Bearer ${action.payload.data.accessToken}`;
+            toast.dismiss('login-user')
           })
           .addCase(loginUser.rejected, (state, action) => {
-            toast.error(
-                { render: typeof action.payload === 'string' ? action.payload: 'Internal server error. Please try again later', type: 'error', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
+            toast.update('login-user',
+                { render: typeof action.payload.message === 'string' ? action.payload.message : 'Internal server error. Please try again later', type: 'error', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
             );
           })
 
           .addCase(registerUser.fulfilled, (state, action) => {
-            if(action.payload.status !== 200){
-                toast.update('register-user',
-                    { render: action.payload.message, type: 'error', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
-                )
-            }
-            if(action.payload.status === 200){
-                toast.update('register-user',
-                    { render: action.payload.message, type: 'success', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
-                )
-            }
+            toast.dismiss('register-user')
           })
           .addCase(registerUser.rejected, (state, action) => {
             toast.update('register-user',
-                { render: typeof action.payload === 'string' ? action.payload: 'Internal server error. Please try again later', type: 'error', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
+                { render: typeof action.payload.message === 'string' ? action.payload.message : 'Internal server error. Please try again later', type: 'error', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
             );
           })
 
@@ -143,6 +125,8 @@ export const userSlice = createSlice({
             state.jwtAccessToken = null;
             state.userData = null;
             state.loginStatus = 0; 
+            state.connectData = null;
+            state.users = [];
             toast.dismiss('logout-user')
           })
           .addCase(logoutUser.rejected, (state, action) => {
@@ -151,16 +135,16 @@ export const userSlice = createSlice({
             );
           })
 
-          .addCase(retrieveAccessToken.fulfilled, (state, action) => {
-            state.jwtAccessToken = action.payload.access_token;
-            state.userData = action.payload.user;
-            state.loginStatus = 1;
+        //   .addCase(retrieveAccessToken.fulfilled, (state, action) => {
+        //     state.jwtAccessToken = action.payload.access_token;
+        //     state.userData = action.payload.user;
+        //     state.loginStatus = 1;
 
-            axios.defaults.headers.common.Authorization = `Bearer ${action.payload.access_token}`;
-          })
-          .addCase(retrieveAccessToken.rejected, (state, action) => {
+        //     axios.defaults.headers.common.Authorization = `Bearer ${action.payload.access_token}`;
+        //   })
+        //   .addCase(retrieveAccessToken.rejected, (state, action) => {
 
-          })
+        //   })
 
           .addCase(updateUser.fulfilled, (state, action) => {
             if(action.payload.status !== 200){
@@ -182,24 +166,19 @@ export const userSlice = createSlice({
 
           .addCase(getUsers.fulfilled, (state, action) => {
             if(action.payload.status !== 200){
-                toast.update('get-users',
-                    { render: action.payload.message, type: 'error', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
-                )
+                toast.error(action.payload.message)
             }
             if(action.payload.status === 200){
                 state.users = action.payload.data
-                toast.dismiss('get-users')
             } 
           })
           .addCase(getUsers.rejected, (state, action) => {
-            toast.update('get-users',
-                { render: typeof action.payload === 'string' ? action.payload.message : 'Internal server error. Please try again later', type: 'error', isLoading: false, autoClose: 5000, draggable: true, closeOnClick: true }
-            );
+            toast.error(action.payload.message);
           })
 
       },
 });
 
-export const {setJwtAccessToken} = userSlice.actions
+export const {} = userSlice.actions
 
 export default userSlice.reducer

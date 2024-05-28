@@ -28,3 +28,7 @@ Route::get('/sign-up', function () {
     return view('welcome');
 });
 
+Route::get('/new-friends', function () {
+    return view('welcome');
+});
+

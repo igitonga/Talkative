@@ -7,6 +7,8 @@ import {
          useTheme,
 } from "@mui/material";
 
+import { toast } from "react-toastify";
+
 import Illustration from "../../assets/landing.svg";
 
 import { useNavigate } from "react-router-dom";

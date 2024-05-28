@@ -16,17 +16,14 @@ use App\Http\Controllers\ChatController;
 |
 */
 
-Route::group(['middleware' => 'api','prefix' => 'auth'], function ($router) {
-    Route::post('login', [UserController::class, 'login']);
-    Route::post('register', [UserController::class, 'register']);
-    Route::get('logout', [UserController::class, 'logout']);
-    Route::post('refresh', [UserController::class, 'refresh']);
-    
-}); 
 
+Route::post('login', [UserController::class, 'login']);
+Route::post('register', [UserController::class, 'register']);
+Route::post('refresh', [UserController::class, 'refresh']);
 Route::get('retrieve-access-token', [UserController::class, 'retrieveAccessToken']);
 
 Route::middleware('auth')->group(function () {
+    Route::get('logout', [UserController::class, 'logout']);
     Route::post('update-user', [UserController::class, 'update']); 
     Route::get('get-users', [UserController::class, 'getUsers']);
 

@@ -8,12 +8,13 @@ import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import { Provider, useSelector, useDispatch } from 'react-redux';
 import store from "../store"
 
+import Navbar from './shared-components/Navbar';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import Chat from './pages/Chat';
-import Navbar from './shared-components/Navbar';
+import NewFriends from './pages/NewFriends';
 
 import { retrieveAccessToken } from '../redux/userSlice';
 
@@ -66,15 +67,18 @@ function App() {
     const navigate = useNavigate();
     const {loginStatus, userData} = useSelector(state => state.user);
 
-    useEffect(() => {
-        if(loginStatus === 0){
-            console.log(loginStatus)
-            dispatch(retrieveAccessToken());
-        }
-    }, [loginStatus])
+    // useEffect(() => {
+    //     if(loginStatus === 0){
+    //         console.log(loginStatus)
+    //         dispatch(retrieveAccessToken());
+    //     }
+    // }, [loginStatus])
 
     useEffect(()=>{
         if(loginStatus === 0){
+            navigate('/login')
+        }
+        else if(loginStatus === 2){
             navigate('/login')
         }
         else{
@@ -101,6 +105,7 @@ function App() {
                     <Route path='/' element={<Dashboard />} />
                     <Route path='/profile' element={<Profile />} />
                     <Route path='/chat' element={<Chat />} />
+                    <Route path='/new-friends' element={<NewFriends />} />
                 </Route>
             </Routes>
 

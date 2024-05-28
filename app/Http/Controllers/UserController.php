@@ -17,7 +17,7 @@ class UserController extends Controller
     public function __construct()
     {
         # By default we are using here auth:api middleware
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login','register']]);
         $this->chatController = new ChatController;
     }
 
@@ -37,6 +37,12 @@ class UserController extends Controller
         try{
             DB::beginTransaction();
 
+            if(User::where('email', $request->email)->count()){
+                return \response([
+                    'message' => "Email is already taken",
+                ],Response::HTTP_CONFLICT);
+            }
+
             $user = new User;
             $user->first_name = $request->firstName;
             $user->last_name = $request->lastName;
@@ -48,15 +54,13 @@ class UserController extends Controller
             DB::commit();
 
             return \response([
-                'status' => Response::HTTP_OK,
                 'message' => 'User registered successfully'
-            ]);
+            ], Response::HTTP_OK);
         }
         catch(Exception $e){
             return \response([
-                'status' => Response::HTTP_NOT_FOUND,
                 'message' => $e->getMessage(),
-            ]);
+            ], Response::HTTP_NOT_FOUND);
         }
     }
 
@@ -67,9 +71,8 @@ class UserController extends Controller
 
             if(!$token = auth()->attempt($credentials)) {
                 return response([
-                    'status' => Response::HTTP_UNAUTHORIZED,
                     'message' => 'Wrong email or password',
-                ]);
+                ], Response::HTTP_FORBIDDEN);
             }
 
             $request->session()->put('access_token', $token);
@@ -78,21 +81,19 @@ class UserController extends Controller
             $respJson = \json_encode($respString);
             $respArray = \json_decode($respJson);
 
-            $data['acccessToken'] = $respArray->original->access_token;
+            $data['accessToken'] = $respArray->original->access_token;
             $data['user'] = $user;
             $data['connectsStats'] = $this->chatController->getStats($user);
             $data['connections'] = [];
 
             return \response(array(
-                'status' => Response::HTTP_OK,
                 'data' => $data,
-            ));
+            ), Response::HTTP_OK);
         }
         catch(Exception $e){
             return \response([
-                'status' => Response::HTTP_NOT_FOUND,
                 'message' => $e->getMessage(),
-            ]);
+            ],  Response::HTTP_NOT_FOUND);
         }
     }
 
@@ -101,10 +102,10 @@ class UserController extends Controller
         return $this->respondWithToken(auth()->refresh());
     }
 
-    public function logout(){
+    public function logout(Request $request){
         try{
             JWTAuth::parseToken()->invalidate(true);
-            auth()->logout();
+            $request->session()->forget('accessToken');;
 
             return \response([
                 'status' => Response::HTTP_OK,

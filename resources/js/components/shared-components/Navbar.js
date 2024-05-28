@@ -216,12 +216,9 @@ export default function Navbar() {
         </Drawer>
         <Main open={open}>
           <DrawerHeader />
-          
+          <Outlet />
         </Main>
       </Box>
-      <main>
-        <Outlet />
-      </main>
     </>
   );
 }
