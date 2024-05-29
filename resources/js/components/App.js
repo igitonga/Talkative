@@ -16,7 +16,7 @@ import Profile from './pages/Profile';
 import Chat from './pages/Chat';
 import NewFriends from './pages/NewFriends';
 
-import { retrieveAccessToken } from '../redux/userSlice';
+import { refreshToken } from '../redux/userSlice';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -67,33 +67,19 @@ function App() {
     const navigate = useNavigate();
     const {loginStatus, userData} = useSelector(state => state.user);
 
-    // useEffect(() => {
-    //     if(loginStatus === 0){
-    //         console.log(loginStatus)
-    //         dispatch(retrieveAccessToken());
-    //     }
-    // }, [loginStatus])
+    useEffect(() => {
+        if(loginStatus === 0)
+            dispatch(refreshToken())
+    }, [loginStatus])
 
     useEffect(()=>{
         if(loginStatus === 0){
-            navigate('/login')
-        }
-        else if(loginStatus === 2){
             navigate('/login')
         }
         else{
             navigate('/')
         }
     },[userData]);
-
-    // if(!userData)
-    //     return (
-    //         <CircularProgress
-    //             className='absolute top-1/2 left-1/2'
-    //             size={50}
-    //             style={{ marginLeft: -25, marginTop: -25 }}
-    //         />
-    //     )
 
     return (
         <ThemeProvider theme={theme}>

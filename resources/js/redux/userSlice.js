@@ -36,19 +36,17 @@ export const registerUser = createAsyncThunk(
     }
 );
 
-export const retrieveAccessToken = createAsyncThunk(
-    'users/retrieveAccessToken',
+export const refreshToken = createAsyncThunk(
+    'users/refreshToken',
     async (rejectWithValue) => {
-        console.log('gooo')
-        try{
-            let response = await axios.get('api/retrieve-access-token');
-            return response.data 
-        }
-        catch(error){
-            return rejectWithValue(error.response.data)
+        try {
+            let response = await axios.get('api/refresh');
+            return response.data
+        } catch (error) {
+            return rejectWithValue(error.response.data);
         }
     }
-)
+);
 
 export const logoutUser = createAsyncThunk(
     'users/logoutUser',
@@ -97,13 +95,13 @@ export const userSlice = createSlice({
     extraReducers: (builder) => {
         builder
           .addCase(loginUser.fulfilled, (state, action) => {
-            state.userData = action.payload.data.user;
-            state.jwtAccessToken = action.payload.data.accessToken;
-            state.connectData = action.payload.data.connectsStats;
-            state.connections = action.payload.data.connections;
+            state.userData = action.payload.user;
+            state.jwtAccessToken = action.payload.accessToken;
+            state.connectData = action.payload.connectsStats;
+            state.connections = action.payload.connections;
             state.loginStatus = 1;
     
-            axios.defaults.headers.common.Authorization = `Bearer ${action.payload.data.accessToken}`;
+            axios.defaults.headers.common.Authorization = `Bearer ${action.payload.accessToken}`;
             toast.dismiss('login-user')
           })
           .addCase(loginUser.rejected, (state, action) => {
@@ -135,16 +133,16 @@ export const userSlice = createSlice({
             );
           })
 
-        //   .addCase(retrieveAccessToken.fulfilled, (state, action) => {
-        //     state.jwtAccessToken = action.payload.access_token;
-        //     state.userData = action.payload.user;
-        //     state.loginStatus = 1;
+          .addCase(refreshToken.fulfilled, (state, action) => {
+            state.loginStatus = 1;
+            state.jwtAccessToken = action.payload.accessToken;
+            state.userData = action.payload.user;
 
-        //     axios.defaults.headers.common.Authorization = `Bearer ${action.payload.access_token}`;
-        //   })
-        //   .addCase(retrieveAccessToken.rejected, (state, action) => {
-
-        //   })
+            axios.defaults.headers.common.Authorization = `Bearer ${action.payload.accessToken}`;
+          })
+          .addCase(refreshToken.rejected, (state, action) => {
+            state.loginStatus = 0;
+          })
 
           .addCase(updateUser.fulfilled, (state, action) => {
             if(action.payload.status !== 200){

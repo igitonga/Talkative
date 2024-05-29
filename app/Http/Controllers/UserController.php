@@ -17,20 +17,7 @@ class UserController extends Controller
     public function __construct()
     {
         # By default we are using here auth:api middleware
-        $this->middleware('auth:api', ['except' => ['login','register']]);
         $this->chatController = new ChatController;
-    }
-
-    protected function respondWithToken($token)
-    {
-        # This function is used to make JSON response with new
-        # access token of current user
-        return response()->json([
-            'status' => Response::HTTP_OK,
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
-        ]);
     }
 
     public function register(Request $request){
@@ -67,28 +54,24 @@ class UserController extends Controller
     public function login(Request $request)
     {
         try{
-            $credentials = request(['email', 'password']);
+            if(Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))){
+                $user = auth()->user();
+                $token = $user->createToken('accessToken')->accessToken;
 
-            if(!$token = auth()->attempt($credentials)) {
-                return response([
-                    'message' => 'Wrong email or password',
-                ], Response::HTTP_FORBIDDEN);
+                $data['accessToken'] = $token;
+                $data['user'] = $user;
+                $data['connectsStats'] = $this->chatController->getStats($user);
+                $data['connections'] = [];
+
+                $request->session()->put('accessToken', $token);
+
+                return \response($data, Response::HTTP_OK);
+            } 
+            else {
+                return \response([
+                    'message' => $e->getMessage(),
+                ],  Response::HTTP_CONFLICT);
             }
-
-            $request->session()->put('access_token', $token);
-            $user = Auth::user();
-            $respString = $this->respondWithToken($token);
-            $respJson = \json_encode($respString);
-            $respArray = \json_decode($respJson);
-
-            $data['accessToken'] = $respArray->original->access_token;
-            $data['user'] = $user;
-            $data['connectsStats'] = $this->chatController->getStats($user);
-            $data['connections'] = [];
-
-            return \response(array(
-                'data' => $data,
-            ), Response::HTTP_OK);
         }
         catch(Exception $e){
             return \response([
@@ -97,55 +80,41 @@ class UserController extends Controller
         }
     }
 
-    public function refresh()
+    public function refresh(Request $request)
     {
-        return $this->respondWithToken(auth()->refresh());
+        try{
+            if($request->session()->has('accessToken')) {
+                $user = Auth::user();
+                $data['user'] = $user;
+                $data['accessToken'] = $user->createToken('accessToken')->accessToken;
+
+                $request->session()->put('accessToken', $data['accessToken']);
+
+                return \response($data, Response::HTTP_OK); 
+            }
+            return response([
+                'message' =>'You need to login'
+            ], Response::HTTP_UNAUTHORIZED); 
+        }
+        catch(Exception $e){
+            return \response([
+                'message' => $e->getMessage(),
+            ],  Response::HTTP_NOT_FOUND);
+        }
     }
 
     public function logout(Request $request){
         try{
-            JWTAuth::parseToken()->invalidate(true);
             $request->session()->forget('accessToken');;
 
             return \response([
-                'status' => Response::HTTP_OK,
                 'message' => 'Logout successfully'
-            ]);  
+            ], Response::HTTP_OK);  
         }
         catch(Exception $e){
             return \response([
-                'status' => Response::HTTP_NOT_FOUND,
                 'message' => $e->getMessage(),
-            ]);
-        }
-    }
-
-    public function retrieveAccessToken(Request $request) {
-        try{
-            if($request->session()->has('access_token')) {
-                $user = Auth::user();
-                $data['user'] = $user;
-                $data['access_token'] = $user->createToken('access_token')->accessToken;
-
-                $request->session()->put('access_token', $data['access_token']);
-
-                return \response([
-                    'status' => Response::HTTP_OK,
-                    'message' => $data
-                ]); 
-            } 
-            else {
-                return response([
-                    'status' => Response::HTTP_UNAUTHORIZED,
-                    'message' =>'You need to login'
-                ]); 
-            }
-        }
-        catch(Exception $e){
-            return \response([
-                'status' => Response::HTTP_NOT_FOUND,
-                'message' => $e->getMessage(),
-            ]);
+            ],  Response::HTTP_NOT_FOUND);
         }
     }
 
