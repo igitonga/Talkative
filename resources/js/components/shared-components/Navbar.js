@@ -21,6 +21,7 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import CallIcon from '@mui/icons-material/Call';
 import LogoutIcon from '@mui/icons-material/Logout';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import Typography from '@mui/material/Typography';
 
 import { useDispatch } from 'react-redux';
@@ -30,6 +31,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { Badge } from '@mui/material';
 
 const drawerWidth = 240;
 
@@ -142,11 +144,15 @@ export default function Navbar() {
 
   const handleDrawerOpen = () => {
     setOpen(true);
-  };
+  }
 
   const handleDrawerClose = () => {
     setOpen(false);
-  };
+  }
+
+  const redirectNotificationsPage = () => {
+    navigate('notifications');
+  }
 
   return (
     <>
@@ -154,19 +160,25 @@ export default function Navbar() {
         <CssBaseline />
         <ToastContainer />
         <AppBar position="fixed" open={open}>
-          <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              edge="start"
-              sx={{ mr: 2, ...(open && { display: 'none' }) }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" noWrap component="div" sx={{ fontWeight: 'bold' }}>
-              Talkative
-            </Typography>
+          <Toolbar className="flex justify-between">
+            <div className='flex items-center'>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleDrawerOpen}
+                edge="start"
+                sx={{ mr: 2, ...(open && { display: 'none' }) }}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Typography variant="h6" noWrap component="div" sx={{ fontWeight: 'bold' }}>
+                Talkative
+              </Typography>
+            </div>
+
+            <Badge badgeContent={3} color='success'>
+              <NotificationsIcon onClick={redirectNotificationsPage}/>
+            </Badge>
           </Toolbar>
         </AppBar>
         <Drawer

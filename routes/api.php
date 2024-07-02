@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\UserConnectionController;
+use App\Http\Controllers\NotificationsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,5 +31,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('send-message', [ChatController::class, 'message']); 
 
     Route::post('friend-request', [UserConnectionController::class, 'create']);
+
+    Route::get('get-notifications', [NotificationsController::class, 'unreadNotifications']);
 });
  

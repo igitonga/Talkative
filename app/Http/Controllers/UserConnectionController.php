@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\UserConnection;
+use App\Models\User;
+use App\Notifications\ConnectionRequest;
 use DB;
 
 class UserConnectionController extends Controller
@@ -13,12 +15,24 @@ class UserConnectionController extends Controller
         try{
             DB::beginTransaction();
 
+            // user receiving request
+            $user = User::find($request->userId);
+
+            if(!$user)
+                return \response([
+                    'message' => $e->getMessage(),
+                    Response::HTTP_NO_CONTENT
+                ]);
+
             $userConnection = new UserConnection;
             $userConnection->party_A = auth()->user()->id;
             $userConnection->party_B = $request->userId;
-            $userConnection->save();
+            $userConnection->save();  
+
+            $user->notify(new ConnectionRequest($user));    
 
             DB::commit();
+
             return \response([
                 'message' => "Request is sent",
             ],  Response::HTTP_OK);            

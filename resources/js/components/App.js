@@ -15,6 +15,7 @@ import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import Chat from './pages/Chat';
 import NewFriends from './pages/NewFriends';
+import Notifications from './pages/Notifications';
 
 import { refreshToken } from '../redux/userSlice';
 
@@ -35,6 +36,7 @@ const theme = createTheme({
         },
         common: {
             black: '#4E4B66',
+            white: '#000000',
             label: '#6E7191',
         },
         warning: {
@@ -92,10 +94,11 @@ function App() {
                     <Route path='/profile' element={<Profile />} />
                     <Route path='/chat' element={<Chat />} />
                     <Route path='/new-friends' element={<NewFriends />} />
+                    <Route path='/notifications' element={<Notifications />} />
                 </Route>
             </Routes>
 
-            {/* For notifications */}
+            {/* For toast notifications */}
             <ToastContainer
                 hideProgressBar
                 theme='colored'
