@@ -1,8 +1,6 @@
 import React, { useEffect } from "react";
 import { useTheme, CircularProgress } from "@mui/material";
 
-import { makeStyles } from "@mui/styles";
-
 import { getUsers } from "../../redux/userSlice";
 
 import { useDispatch, useSelector } from "react-redux";

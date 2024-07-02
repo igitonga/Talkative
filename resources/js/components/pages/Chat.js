@@ -1,7 +1,5 @@
 import React, {useEffect, useState} from "react";
 import { TextareaAutosize, useTheme } from "@mui/material";
-import { makeStyles } from "@mui/styles";
-import clsx from "clsx";
 
 import pusherJs from "pusher-js";
 
@@ -11,21 +9,8 @@ import { sendMessage } from "../../redux/chatSlice";
 
 import { useDispatch } from "react-redux";
 
-const useStyles = makeStyles(theme => ({
-    body: {
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat',
-    },
-    textBox: {
-        position: 'fixed',
-        bottom: 0,
-        background: theme.palette.background.paper,
-    }
-}))
-
 const Chat = () => {
     const theme = useTheme();
-    const classes = useStyles();
     const dispatch = useDispatch();
 
     const [textValue, setTextValue] = useState('');
@@ -53,11 +38,20 @@ const Chat = () => {
     }
 
     return(
-        <div className={classes.body}>
+        <div style={{ 
+                    backgroundSize: 'cover', 
+                    backgroundRepeat: 'no-repeat' 
+                }}>
             <div>
                 {console.log({messages: messages})}
             </div>
-            <TextareaAutosize className={clsx('w-full p-5', classes.textBox)}
+            <TextareaAutosize 
+                className='w-full p-5'
+                sx={{ 
+                    position: 'fixed',
+                    bottom: 0,
+                    background: theme.palette.background.paper, 
+                }} 
                 placeholder="Message"
                 onKeyDown={handleKeyDown}
                 value={textValue}

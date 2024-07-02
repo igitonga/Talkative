@@ -6,23 +6,12 @@ import Box from '@mui/material/Box';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 
-import { makeStyles } from "@mui/styles";
-
 import ChatPreview from "../shared-components/ChatPreview";
 import { useDispatch, useSelector } from "react-redux";
 import { getUsers } from "../../redux/userSlice";
 
-const useStyles = makeStyles(theme => ({
-  faintText: {
-    color: theme.palette.secondary.light,
-    fontSize: 25,
-    fontWeight: 'bold',
-  }
-}))
-
 const Dashboard = () => {
     const theme = useTheme();
-    const classes = useStyles();
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -41,7 +30,13 @@ const Dashboard = () => {
           ))}  */}
 
           {connections.length == 0 && (
-            <p className={classes.faintText}>Add friends with the plus button below</p>
+            <p style={{ 
+                  color: theme.palette.secondary.light,
+                  fontSize: 25,
+                  fontWeight: 'bold'
+             }}>
+              Add friends with the plus button below
+            </p>
           )}
 
           <Box sx={{

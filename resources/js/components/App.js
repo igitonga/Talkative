@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 
 import { CircularProgress } from '@mui/material';
 
@@ -111,12 +111,15 @@ function App() {
 
 export default App;
 
-if (document.getElementById('app')) {
-    ReactDOM.render(
-        <Provider store={store}>
-            <BrowserRouter>
-                <App />
-            </BrowserRouter>
-        </Provider>
-    , document.getElementById('app'));
-}
+// if (document.getElementById('app')) {
+//     ReactDOM.createRoot(
+        
+//     , document.getElementById('app'));
+// }
+ReactDOM.createRoot(document.getElementById('app')).render(
+    <Provider store={store}>
+        <BrowserRouter>
+            <App />
+        </BrowserRouter>
+    </Provider>
+);
