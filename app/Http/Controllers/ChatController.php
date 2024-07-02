@@ -31,21 +31,6 @@ class ChatController extends Controller
             ]);
         }
     }
-
-    public function getStats($user){
-        $requestsSent = UserConnection::where('party_A', $user->id)->count();
-        $requestsReceived = UserConnection::where('party_B', $user->id)->count();
-        $connections = UserConnection::where('party_A', $user->id)->orWhere('party_B', $user->id)
-                        ->where('status', 'accepted')->count();
-
-        $data = array(
-            'requestsSent' => $requestsSent,
-            'requestsReceived' => $requestsReceived,
-            'connections' => $connections,
-        );
-
-        return $data;
-    }
     
     public function message(Request $request){
         try{

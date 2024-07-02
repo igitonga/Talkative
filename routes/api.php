@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;   
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\UserConnectionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,5 +28,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('get-users', [UserController::class, 'getUsers']);
 
     Route::post('send-message', [ChatController::class, 'message']); 
+
+    Route::post('friend-request', [UserConnectionController::class, 'create']);
 });
  

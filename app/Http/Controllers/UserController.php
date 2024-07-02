@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Controllers\ChatController;
+use App\Http\Controllers\UserConnectionController;
 use Illuminate\Validation\Rule;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\User;
@@ -17,7 +17,7 @@ class UserController extends Controller
     public function __construct()
     {
         # By default we are using here auth:api middleware
-        $this->chatController = new ChatController;
+        $this->userConnectionController = new UserConnectionController;
     }
 
     public function register(Request $request){
@@ -60,7 +60,7 @@ class UserController extends Controller
 
                 $data['accessToken'] = $token;
                 $data['user'] = $user;
-                $data['connectsStats'] = $this->chatController->getStats($user);
+                $data['connectsStats'] = $this->userConnectionController->getStats($user);
                 $data['connections'] = [];
 
                 $request->session()->put('accessToken', $token);
@@ -87,6 +87,7 @@ class UserController extends Controller
                 $user = Auth::user();
                 $data['user'] = $user;
                 $data['accessToken'] = $user->createToken('accessToken')->accessToken;
+                $data['connectsStats'] = $this->userConnectionController->getStats($user);
 
                 $request->session()->put('accessToken', $data['accessToken']);
 

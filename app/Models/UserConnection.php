@@ -10,4 +10,8 @@ class UserConnection extends Model
     use HasFactory;
 
     protected $fillable = ['party_A','party_B'];
+
+    public function sentRequest(){
+        return $this->belongsTo(User::class, 'party_A');
+    }
 }
