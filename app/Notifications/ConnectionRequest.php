@@ -59,7 +59,7 @@ class ConnectionRequest extends Notification
         $name = $this->user->first_name .' '. $this->user->last_name;
         
         return [
-            'data' =>' Connection request from '.$name
+            'data' => $name.' sent a connection request'
         ];
     }
 }

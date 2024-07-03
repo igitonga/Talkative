@@ -32,3 +32,7 @@ Route::get('/new-friends', function () {
     return view('welcome');
 });
 
+Route::get('/notifications', function () {
+    return view('welcome');
+});
+

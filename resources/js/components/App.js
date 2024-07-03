@@ -22,6 +22,8 @@ import { refreshToken } from '../redux/userSlice';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
 const theme = createTheme({
     palette: {
         primary: {
@@ -37,6 +39,7 @@ const theme = createTheme({
         common: {
             black: '#4E4B66',
             white: '#000000',
+            gray: '#808080',
             label: '#6E7191',
         },
         warning: {
@@ -68,6 +71,8 @@ function App() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const {loginStatus, userData} = useSelector(state => state.user);
+
+    const queryClient = new QueryClient();
 
     useEffect(() => {
         if(loginStatus === 0)
@@ -111,11 +116,6 @@ function App() {
 
 export default App;
 
-// if (document.getElementById('app')) {
-//     ReactDOM.createRoot(
-        
-//     , document.getElementById('app'));
-// }
 ReactDOM.createRoot(document.getElementById('app')).render(
     <Provider store={store}>
         <BrowserRouter>

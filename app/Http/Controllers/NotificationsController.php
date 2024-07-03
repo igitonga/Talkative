@@ -25,4 +25,17 @@ class NotificationsController extends Controller
             ],  Response::HTTP_NOT_FOUND);
         }
     }
+
+    public function markAllAsRead(){
+        try{
+            auth()->user()->unreadNotifications->markAsRead();
+            
+            return \response('All notifications have been marked', Response::HTTP_OK);
+        }
+        catch(Exception $e){
+            return \response([
+                'message' => $e->getMessage(),
+            ],  Response::HTTP_NOT_FOUND);
+        }
+    }
 }

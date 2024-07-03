@@ -20,18 +20,19 @@ const Friend = (props) => {
              style={{ borderBottom: `1px solid ${theme.palette.background.paper}` }}
         >
             <div  className="flex items-center ">
-                <AccountCircle color="action" sx={{ fontSize: '50px' }}/>
+                <AccountCircle color="action" sx={{ fontSize: '40px' }}/>
                 <div className="ml-3">
                     <p style={{ fontWeight: 'bold' }}>{props.name}</p>
                 </div>
             </div>
             <div>
                 <Button 
-                    className="normal-case rounded-full"
+                    className="rounded-full"
                     variant="contained"
                     size="small"
                     sx={{
-                        fontWeight: 'bold',
+                        
+                        textTransform: 'none',
                     }}  
                     onClick={handleFreindRequest}
                 >

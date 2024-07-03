@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useEffect} from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -24,8 +24,9 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import Typography from '@mui/material/Typography';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser } from '../../redux/userSlice';
+import { getNotifications } from '../../redux/notificationSlice';
 
 import { Outlet, useNavigate } from 'react-router-dom';
 
@@ -38,7 +39,7 @@ const drawerWidth = 240;
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
     flexGrow: 1,
-    padding: theme.spacing(3),
+    padding: theme.spacing(2),
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -85,6 +86,8 @@ export default function Navbar() {
   const [open, setOpen] = React.useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const { notificationsCount } = useSelector(state => state.notification);
 
   const menuOptions = [
     {
@@ -154,6 +157,10 @@ export default function Navbar() {
     navigate('notifications');
   }
 
+  useEffect(() => {
+    dispatch(getNotifications());
+  },[]);
+
   return (
     <>
       <Box style={{ display: 'flex', position: 'sticky'}}>
@@ -176,7 +183,7 @@ export default function Navbar() {
               </Typography>
             </div>
 
-            <Badge badgeContent={3} color='success'>
+            <Badge badgeContent={notificationsCount} color='success'>
               <NotificationsIcon onClick={redirectNotificationsPage}/>
             </Badge>
           </Toolbar>
