@@ -8,7 +8,7 @@ import AddIcon from '@mui/icons-material/Add';
 
 import ChatPreview from "../shared-components/ChatPreview";
 import { useDispatch, useSelector } from "react-redux";
-import { getUsers } from "../../redux/userSlice";
+import { getConnections } from "../../redux/userSlice";
 
 const Dashboard = () => {
     const theme = useTheme();
@@ -18,26 +18,29 @@ const Dashboard = () => {
     const { connections } = useSelector(state => state.user)
 
     useEffect(() => {
-        //dispatch(getUsers())
+        dispatch(getConnections())
     },[]);
 
     return(
         <div className="h-full">
-          {/* {users !== null && users.map((user)=> (
-            <ChatPreview key={user.id}
-                         name={user.first_name+" "+user.last_name} 
-                         text="Lorem ipsum all the way" />
-          ))}  */}
-
-          {connections.length == 0 && (
-            <p style={{ 
-                  color: theme.palette.secondary.light,
-                  fontSize: 25,
-                  fontWeight: 'bold'
-             }}>
-              Add friends with the plus button below
-            </p>
-          )}
+          {
+            connections.length == 0 ? 
+            (
+              <p style={{ 
+                color: theme.palette.secondary.light,
+                fontSize: 25,
+                fontWeight: 'bold'
+              }}>
+                Add friends with the plus button below
+              </p>
+            )
+            : 
+            connections.map(connection => (
+              <ChatPreview key={connection.id}
+                           name={connection.first_name+" "+connection.last_name} 
+                           text="Lorem ipsum all the way" />
+            ))
+          }
 
           <Box sx={{
              '& > :not(style)': { m: 1 }, 

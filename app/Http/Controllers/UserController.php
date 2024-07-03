@@ -9,6 +9,7 @@ use App\Http\Controllers\UserConnectionController;
 use Illuminate\Validation\Rule;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\User;
+use App\Models\UserConnection;
 use App\Events\UserEvent;
 use DB;
 use Auth;
@@ -16,7 +17,6 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        # By default we are using here auth:api middleware
         $this->userConnectionController = new UserConnectionController;
     }
 
@@ -61,7 +61,6 @@ class UserController extends Controller
                 $data['accessToken'] = $token;
                 $data['user'] = $user;
                 $data['connectsStats'] = $this->userConnectionController->getStats($user);
-                $data['connections'] = [];
 
                 $request->session()->put('accessToken', $token);
 
@@ -150,10 +149,41 @@ class UserController extends Controller
     public function getUsers(){
         try{
             $users = User::where('id', '!=', auth()->user()->id)->get();
+            // $sent = UserConnection::where('party_A', auth()->user()->id)->get();
+            // $received = UserConnection::where('party_B', auth()->user()->id)->get();
 
             return \response([
                 'status' => Response::HTTP_OK,
                 'message' => 'All users',
+                'data' => $users,
+            ]);
+        }
+        catch(Exception $e){
+            return \response([
+                'status' => Response::HTTP_NOT_FOUND,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function getConnections(){
+        try{
+            $sentToPeople = UserConnection::where('party_A', auth()->user()->id)->where('status', 'accepted')->get();
+            $receivedFromPeople = UserConnection::where('party_B', auth()->user()->id)->where('status', 'accepted')->get();
+            $users = array();
+
+            if($sentToPeople || $receivedFromPeople){
+                foreach($sentToPeople as $connection){
+                    $users[] = $connection->receiveRequest;
+                }
+
+                foreach($receivedFromPeople as $connection){
+                    $users[] = $connection->sentRequest;
+                }
+            }
+
+            return \response([
+                'status' => Response::HTTP_OK,
                 'data' => $users,
             ]);
         }

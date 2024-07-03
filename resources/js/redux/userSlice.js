@@ -80,6 +80,18 @@ export const getUsers = createAsyncThunk(
     }
 );
 
+export const getConnections = createAsyncThunk(
+    'users/getConnections',
+    async (rejectWithValue) => {
+        try {
+            let response = await axios.get('api/get-connections');
+            return response.data
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
 export const userSlice = createSlice({
     name: 'user',
     initialState: {
@@ -98,7 +110,6 @@ export const userSlice = createSlice({
             state.userData = action.payload.user;
             state.jwtAccessToken = action.payload.accessToken;
             state.connectData = action.payload.connectsStats;
-            state.connections = action.payload.connections;
             state.loginStatus = 1;
     
             axios.defaults.headers.common.Authorization = `Bearer ${action.payload.accessToken}`;
@@ -171,6 +182,18 @@ export const userSlice = createSlice({
             } 
           })
           .addCase(getUsers.rejected, (state, action) => {
+            toast.error(action.payload.message);
+          })
+
+          .addCase(getConnections.fulfilled, (state, action) => {
+            if(action.payload.status !== 200){
+                toast.error(action.payload.message)
+            }
+            if(action.payload.status === 200){
+                state.connections = action.payload.data;
+            } 
+          })
+          .addCase(getConnections.rejected, (state, action) => {
             toast.error(action.payload.message);
           })
 

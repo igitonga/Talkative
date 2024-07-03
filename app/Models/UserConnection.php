@@ -14,4 +14,8 @@ class UserConnection extends Model
     public function sentRequest(){
         return $this->belongsTo(User::class, 'party_A');
     }
+
+    public function receiveRequest(){
+        return $this->belongsTo(User::class, 'party_B');
+    }
 }

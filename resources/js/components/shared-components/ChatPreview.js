@@ -12,7 +12,7 @@ const ChatPreview = (props) => {
     }
 
     return(
-        <div className="flex p-2 items-center" 
+        <div className="flex py-2 items-center" 
              style={{ borderBottom: `1px solid ${theme.palette.background.paper}` }}
              onClick={handleClickOnChat}
         >

@@ -27,6 +27,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('logout', [UserController::class, 'logout']);
     Route::post('update-user', [UserController::class, 'update']); 
     Route::get('get-users', [UserController::class, 'getUsers']);
+    Route::get('get-connections', [UserController::class, 'getConnections']);
 
     Route::post('send-message', [ChatController::class, 'message']); 
 

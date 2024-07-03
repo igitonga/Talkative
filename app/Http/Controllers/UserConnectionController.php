@@ -11,9 +11,31 @@ use DB;
 
 class UserConnectionController extends Controller
 {
+    private function checkExistingConnection($userId){
+        $existingConnection = UserConnection::where(function ($query) use ($userId) {
+            $query->where(function ($query) {
+                $query->where('party_A', auth()->user()->id)
+                      ->orWhere('party_B', auth()->user()->id);
+            })->where(function ($query) use ($userId) {
+                $query->where('party_A', $userId)
+                      ->orWhere('party_B', $userId);
+            });
+        })->get();
+
+        return $existingConnection;
+    }
+
     public function create(Request $request){
         try{
             DB::beginTransaction();
+
+            $existConn = $this->checkExistingConnection($request->userId);
+
+            if(!$existConn->isEmpty())
+                return \response([
+                    'message' => 'Existing connection request',
+                    Response::HTTP_IM_USED
+                ]);
 
             // user receiving request
             $user = User::find($request->userId);
@@ -57,10 +79,17 @@ class UserConnectionController extends Controller
     }
 
     public function getStats($user){
-        $requestsSent = UserConnection::where('party_A', $user->id)->count();
-        $requestsReceived = UserConnection::where('party_B', $user->id)->count();
-        $connections = UserConnection::where('party_A', $user->id)->orWhere('party_B', $user->id)
-                        ->where('status', 'accepted')->count();
+        $userId = $user->id;
+
+        $requestsSent = UserConnection::where('party_A', $userId)->count();
+
+        $requestsReceived = UserConnection::where('party_B', $userId)->count();
+
+        $connections = UserConnection::where(function ($query) use ($userId) {
+            $query->where('party_A',$userId)
+                ->where('party_B',$userId);
+            })
+        ->where('status', 'accepted')->count();
 
         $data = array(
             'requestsSent' => $requestsSent,

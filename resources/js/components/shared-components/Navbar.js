@@ -165,7 +165,6 @@ export default function Navbar() {
     <>
       <Box style={{ display: 'flex', position: 'sticky'}}>
         <CssBaseline />
-        <ToastContainer />
         <AppBar position="fixed" open={open}>
           <Toolbar className="flex justify-between">
             <div className='flex items-center'>
