@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useEffect} from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -21,22 +21,25 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import CallIcon from '@mui/icons-material/Call';
 import LogoutIcon from '@mui/icons-material/Logout';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import Typography from '@mui/material/Typography';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser } from '../../redux/userSlice';
+import { getNotifications } from '../../redux/notificationSlice';
 
 import { Outlet, useNavigate } from 'react-router-dom';
 
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { Badge } from '@mui/material';
 
 const drawerWidth = 240;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
     flexGrow: 1,
-    padding: theme.spacing(3),
+    padding: theme.spacing(2),
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -83,6 +86,8 @@ export default function Navbar() {
   const [open, setOpen] = React.useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const { notificationsCount } = useSelector(state => state.notification);
 
   const menuOptions = [
     {
@@ -142,31 +147,44 @@ export default function Navbar() {
 
   const handleDrawerOpen = () => {
     setOpen(true);
-  };
+  }
 
   const handleDrawerClose = () => {
     setOpen(false);
-  };
+  }
+
+  const redirectNotificationsPage = () => {
+    navigate('notifications');
+  }
+
+  useEffect(() => {
+    dispatch(getNotifications());
+  },[]);
 
   return (
     <>
       <Box style={{ display: 'flex', position: 'sticky'}}>
         <CssBaseline />
-        <ToastContainer />
         <AppBar position="fixed" open={open}>
-          <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              edge="start"
-              sx={{ mr: 2, ...(open && { display: 'none' }) }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" noWrap component="div" sx={{ fontWeight: 'bold' }}>
-              Talkative
-            </Typography>
+          <Toolbar className="flex justify-between">
+            <div className='flex items-center'>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleDrawerOpen}
+                edge="start"
+                sx={{ mr: 2, ...(open && { display: 'none' }) }}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Typography variant="h6" noWrap component="div" sx={{ fontWeight: 'bold' }}>
+                Talkative
+              </Typography>
+            </div>
+
+            <Badge badgeContent={notificationsCount} color='success'>
+              <NotificationsIcon onClick={redirectNotificationsPage}/>
+            </Badge>
           </Toolbar>
         </AppBar>
         <Drawer
@@ -216,12 +234,9 @@ export default function Navbar() {
         </Drawer>
         <Main open={open}>
           <DrawerHeader />
-          
+          <Outlet />
         </Main>
       </Box>
-      <main>
-        <Outlet />
-      </main>
     </>
   );
 }

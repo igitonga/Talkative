@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {  
     TextField,
     Button,
@@ -9,13 +9,15 @@ import { AccountCircle } from "@mui/icons-material";
 
 import { useDispatch, useSelector } from "react-redux";
 import { updateUser } from "../../redux/userSlice";
+import { requestsCount } from "../../redux/chatSlice";
 
 import { ToastContainer } from "react-toastify";
 
 const Profile = () => {
     const theme = useTheme()
-    const { userData } = useSelector(state => state.user)
     const dispatch = useDispatch()
+    const { userData, connectData } = useSelector(state => state.user)
+    const { requestsData } = useSelector(state => state.chat)
 
     const [loading, setLoading] = useState(false)
     const [firstName, setFirstName] = useState(userData.first_name);
@@ -56,15 +58,15 @@ const Profile = () => {
                 <span className="flex justify-between mt-2">
                     <span>
                         <h5 style={{ opacity: 0.5, fontSize: '12px' }}>Requests received</h5>
-                        <p style={{ textAlign: 'center', fontWeight: 'bold' }}>2</p>
+                        <p style={{ textAlign: 'center', fontWeight: 'bold' }}>{connectData.requestsReceived}</p>
                     </span>
                     <span>
                         <h5 style={{ opacity: 0.5, fontSize: '12px' }}>Requests sent</h5>
-                        <p style={{ textAlign: 'center', fontWeight: 'bold' }}>2</p>
+                        <p style={{ textAlign: 'center', fontWeight: 'bold' }}>{connectData.requestsSent}</p>
                     </span>
                     <span>
                         <h5 style={{ opacity: 0.5, fontSize: '12px' }}>Connections</h5>
-                        <p style={{ textAlign: 'center', fontWeight: 'bold' }}>2</p>
+                        <p style={{ textAlign: 'center', fontWeight: 'bold' }}>{connectData.connections}</p>
                     </span>
                 </span>
             </div>
@@ -103,7 +105,6 @@ const Profile = () => {
                 />
                 <TextField
                     id="outlined-dob"
-                    label="Date of birth"
                     sx={{ my: 1
                         }}
                     type="date"

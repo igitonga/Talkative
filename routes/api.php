@@ -1,9 +1,11 @@
 <?php
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Route;   
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\UserConnectionController;
+use App\Http\Controllers\NotificationsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,17 +18,21 @@ use App\Http\Controllers\ChatController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 Route::post('login', [UserController::class, 'login']);
 Route::post('register', [UserController::class, 'register']);
-Route::get('logout', [UserController::class, 'logout']);
- 
-Route::group(['middleware' => 'api'], function ($router) {
+Route::get('refresh', [UserController::class, 'refresh']);
+
+Route::middleware('auth:api')->group(function () {
+    Route::get('logout', [UserController::class, 'logout']);
     Route::post('update-user', [UserController::class, 'update']); 
     Route::get('get-users', [UserController::class, 'getUsers']);
-    
+    Route::get('get-connections', [UserController::class, 'getConnections']);
+
     Route::post('send-message', [ChatController::class, 'message']); 
+
+    Route::post('friend-request', [UserConnectionController::class, 'create']);
+
+    Route::get('get-notifications', [NotificationsController::class, 'unreadNotifications']);
 });
+ 

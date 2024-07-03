@@ -5,36 +5,30 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\UserConnectionController;
 use Illuminate\Validation\Rule;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\User;
+use App\Models\UserConnection;
 use App\Events\UserEvent;
 use DB;
-
+use Auth;
 class UserController extends Controller
 {
     public function __construct()
     {
-        # By default we are using here auth:api middleware
-        $this->middleware('api', ['except' => ['login','register']]);
-    }
-
-    protected function respondWithToken($token)
-    {
-        # This function is used to make JSON response with new
-        # access token of current user
-        return response()->json([
-            'status' => Response::HTTP_OK,
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
-            'user' => auth()->user()
-        ]);
+        $this->userConnectionController = new UserConnectionController;
     }
 
     public function register(Request $request){
         try{
             DB::beginTransaction();
+
+            if(User::where('email', $request->email)->count()){
+                return \response([
+                    'message' => "Email is already taken",
+                ],Response::HTTP_CONFLICT);
+            }
 
             $user = new User;
             $user->first_name = $request->firstName;
@@ -47,55 +41,80 @@ class UserController extends Controller
             DB::commit();
 
             return \response([
-                'status' => Response::HTTP_OK,
                 'message' => 'User registered successfully'
-            ]);
+            ], Response::HTTP_OK);
         }
         catch(Exception $e){
             return \response([
-                'status' => Response::HTTP_NOT_FOUND,
                 'message' => $e->getMessage(),
-            ]);
+            ], Response::HTTP_NOT_FOUND);
         }
     }
 
-    public function login()
+    public function login(Request $request)
     {
         try{
-            $credentials = request(['email', 'password']);
+            if(Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))){
+                $user = auth()->user();
+                $token = $user->createToken('accessToken')->accessToken;
 
-            if(!$token = auth()->attempt($credentials)) {
-                return response([
-                    'status' => Response::HTTP_UNAUTHORIZED,
-                    'message' => 'Wrong email or password',
-                ]);
+                $data['accessToken'] = $token;
+                $data['user'] = $user;
+                $data['connectsStats'] = $this->userConnectionController->getStats($user);
+
+                $request->session()->put('accessToken', $token);
+
+                return \response($data, Response::HTTP_OK);
+            } 
+            else {
+                return \response([
+                    'message' => $e->getMessage(),
+                ],  Response::HTTP_CONFLICT);
             }
-    
-            return $this->respondWithToken($token);
         }
         catch(Exception $e){
             return \response([
-                'status' => Response::HTTP_NOT_FOUND,
                 'message' => $e->getMessage(),
-            ]);
+            ],  Response::HTTP_NOT_FOUND);
         }
     }
 
-    public function logout(){
+    public function refresh(Request $request)
+    {
         try{
-            JWTAuth::parseToken()->invalidate(true);
-            auth()->logout();
+            if($request->session()->has('accessToken')) {
+                $user = Auth::user();
+                $data['user'] = $user;
+                $data['accessToken'] = $user->createToken('accessToken')->accessToken;
+                $data['connectsStats'] = $this->userConnectionController->getStats($user);
 
-            return \response([
-                'status' => Response::HTTP_OK,
-                'message' => 'Logout successfully'
-            ]);  
+                $request->session()->put('accessToken', $data['accessToken']);
+
+                return \response($data, Response::HTTP_OK); 
+            }
+            return response([
+                'message' =>'You need to login'
+            ], Response::HTTP_UNAUTHORIZED); 
         }
         catch(Exception $e){
             return \response([
-                'status' => Response::HTTP_NOT_FOUND,
                 'message' => $e->getMessage(),
-            ]);
+            ],  Response::HTTP_NOT_FOUND);
+        }
+    }
+
+    public function logout(Request $request){
+        try{
+            $request->session()->forget('accessToken');;
+
+            return \response([
+                'message' => 'Logout successfully'
+            ], Response::HTTP_OK);  
+        }
+        catch(Exception $e){
+            return \response([
+                'message' => $e->getMessage(),
+            ],  Response::HTTP_NOT_FOUND);
         }
     }
 
@@ -129,11 +148,42 @@ class UserController extends Controller
 
     public function getUsers(){
         try{
-            $users = User::all();
+            $users = User::where('id', '!=', auth()->user()->id)->get();
+            // $sent = UserConnection::where('party_A', auth()->user()->id)->get();
+            // $received = UserConnection::where('party_B', auth()->user()->id)->get();
 
             return \response([
                 'status' => Response::HTTP_OK,
                 'message' => 'All users',
+                'data' => $users,
+            ]);
+        }
+        catch(Exception $e){
+            return \response([
+                'status' => Response::HTTP_NOT_FOUND,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function getConnections(){
+        try{
+            $sentToPeople = UserConnection::where('party_A', auth()->user()->id)->where('status', 'accepted')->get();
+            $receivedFromPeople = UserConnection::where('party_B', auth()->user()->id)->where('status', 'accepted')->get();
+            $users = array();
+
+            if($sentToPeople || $receivedFromPeople){
+                foreach($sentToPeople as $connection){
+                    $users[] = $connection->receiveRequest;
+                }
+
+                foreach($receivedFromPeople as $connection){
+                    $users[] = $connection->sentRequest;
+                }
+            }
+
+            return \response([
+                'status' => Response::HTTP_OK,
                 'data' => $users,
             ]);
         }
