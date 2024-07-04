@@ -1,3 +1,4 @@
+#!/bin/bash
 
 # Install composer dependencies without dev dependencies
 composer install --optimize-autoloader --no-dev
